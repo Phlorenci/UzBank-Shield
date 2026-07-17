@@ -1,4 +1,4 @@
-from utils import get_user_input
+from utils import get_user_input , extract_url_components
 """
 ==================================================
 UzBank Shield
@@ -30,8 +30,18 @@ def main():
 
     url = get_user_input()
 
-    print("\n URL received successfully!")
-    print(f"Input: {url}")
+    components = extract_url_components(url)
+
+    print("\n========== URL COMPONENTS ==========\n")
+
+    print(f"Original URL : {components['original_url']}")
+    print(f"Protocol     : {components['protocol']}")
+    print(f"Domain       : {components['domain']}")
+    print(f"Path         : {components['path'] or '(none)'}")
+    print(f"Query        : {components['query'] or '(none)'}")
+    print(f"Fragment     : {components['fragment'] or '(none)'}")
+
+    print("\n====================================")
 
 
 if __name__ == "__main__":
