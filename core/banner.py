@@ -1,31 +1,14 @@
 # Welcome banner
-from rich.panel import Panel
-from rich.align import Align
-from core.theme import console
+from rich.console import Console
+from rich.rule import Rule
+
+console = Console()
 
 
 def print_banner():
-
-    banner = """
-████████╗██████╗
-╚══██╔══╝██╔══██╗
-   ██║   ██████╔╝
-   ██║   ██╔══██╗
-   ██║   ██████╔╝
-   ╚═╝   ╚═════╝
-
-      UZBANK SHIELD
-"""
-
     console.print()
-
-    console.print(
-        Panel.fit(
-            Align.center(banner),
-            title="Cybersecurity Toolkit",
-            subtitle="Version 0.3.0",
-            border_style="cyan"
-        )
-    )
-
-    console.print("[green]Protect • Detect • Verify[/green]")
+    console.print(Rule("[bold cyan]UzBank Shield[/bold cyan]"))
+    console.print("Cybersecurity URL Analysis Toolkit")
+    console.print("Version 0.3.0")
+    console.print(Rule(style="cyan"))
+    console.print("[green]Status:[/green] Ready\n")
