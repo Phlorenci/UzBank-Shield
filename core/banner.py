@@ -1,13 +1,31 @@
 # Welcome banner
+from rich.panel import Panel
+from rich.align import Align
+from core.theme import console
+
+
 def print_banner():
-    print("=" * 60)
-    print("UZBANK SHIELD")
-    print("Version 0.3.0")
-    print("Cybersecurity URL Analysis Toolkit")
-    print("=" * 60)
-    print()
-    print("Protect • Detect • Verify")
-    print()
-    print("Welcome to UzBank Shield!")
-    print("Analyze URLs for phishing indicators and suspicious patterns.")
-    print("-" * 60)
+
+    banner = """
+████████╗██████╗
+╚══██╔══╝██╔══██╗
+   ██║   ██████╔╝
+   ██║   ██╔══██╗
+   ██║   ██████╔╝
+   ╚═╝   ╚═════╝
+
+      UZBANK SHIELD
+"""
+
+    console.print()
+
+    console.print(
+        Panel.fit(
+            Align.center(banner),
+            title="Cybersecurity Toolkit",
+            subtitle="Version 0.3.0",
+            border_style="cyan"
+        )
+    )
+
+    console.print("[green]Protect • Detect • Verify[/green]")

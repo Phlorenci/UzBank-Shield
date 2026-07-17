@@ -1,57 +1,75 @@
-# Generates the analysis report
+from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
+
+from core.theme import console
+
 
 def print_analysis_report(components, keywords, score, level):
-    """
-    Print a formatted URL analysis report.
-    """
 
-    print()
-    print("=" * 60)
-    print("URL SECURITY ANALYSIS REPORT")
-    print("=" * 60)
+    table = Table(title="URL INFORMATION")
 
-    print("\nOriginal URL")
-    print(components["original_url"])
+    table.add_column("Field", style="cyan")
+    table.add_column("Value", style="white")
 
-    print("\n" + "-" * 60)
+    table.add_row("Original URL", components["original_url"])
+    table.add_row("Protocol", components["protocol"])
+    table.add_row("Domain", components["domain"])
+    table.add_row("Path", components["path"] or "-")
+    table.add_row("Query", components["query"] or "-")
+    table.add_row("Fragment", components["fragment"] or "-")
 
-    print("Protocol :", components["protocol"].upper())
-    print("Domain   :", components["domain"])
-    print("Path     :", components["path"] or "(none)")
-    print("Query    :", components["query"] or "(none)")
-    print("Fragment :", components["fragment"] or "(none)")
+    console.print(table)
 
-    print("\n" + "-" * 60)
+    keyword_table = Table(title="Detected Keywords")
 
-    print("Detected Keywords")
+    keyword_table.add_column("Keyword")
 
     if keywords:
 
         for keyword in keywords:
-            print(f"✓ {keyword}")
+
+            keyword_table.add_row(keyword)
 
     else:
 
-        print("None")
+        keyword_table.add_row("None")
 
-    print("\n" + "-" * 60)
-
-    print(f"Risk Score : {score}/100")
+    console.print(keyword_table)
 
     if level == "LOW":
-        print("Risk Level : LOW")
+
+        color = "green"
 
     elif level == "MEDIUM":
-        print("Risk Level : MEDIUM")
+
+        color = "yellow"
 
     else:
-        print("Risk Level : HIGH")
 
-    print("\nRecommendations")
+        color = "red"
 
-    print("• Verify the official website.")
-    print("• Do not enter banking credentials immediately.")
-    print("• Check SSL certificate.")
-    print("• Compare the domain carefully.")
+    console.print(
+        Panel.fit(
+            f"[bold]{score}/100[/bold]\nRisk Level: [{color}]{level}[/{color}]",
+            title="Security Assessment",
+            border_style=color
+        )
+    )
 
-    print("=" * 60)
+    recommendations = Text()
+
+    recommendations.append("Recommendations\n\n", style="bold cyan")
+
+    recommendations.append("• Verify the official domain\n")
+    recommendations.append("• Never share OTP codes\n")
+    recommendations.append("• Check SSL certificate\n")
+    recommendations.append("• Compare the URL carefully\n")
+    recommendations.append("• Contact the bank if unsure")
+
+    console.print(
+        Panel(
+            recommendations,
+            border_style="blue"
+        )
+    )
