@@ -4,6 +4,7 @@ from core.parser import extract_url_components
 from core.validator import validate_url
 from core.scanner import scan_for_keywords
 from core.reporter import print_analysis_report
+from core.risk import calculate_risk_score
 
 
 def main():
@@ -19,9 +20,13 @@ def main():
 
     keywords = scan_for_keywords(components)
 
+    score, level = calculate_risk_score(keywords)
+
     print_analysis_report(
         components,
-        keywords
+        keywords,
+        score,
+        level
     )
 
 

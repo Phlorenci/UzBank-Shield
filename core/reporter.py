@@ -1,27 +1,57 @@
 # Generates the analysis report
 
-def print_analysis_report(components, keywords):
+def print_analysis_report(components, keywords, score, level):
     """
     Print a formatted URL analysis report.
     """
 
-    print("\n" + "=" * 60)
-    print("URL ANALYSIS REPORT")
+    print()
+    print("=" * 60)
+    print("URL SECURITY ANALYSIS REPORT")
     print("=" * 60)
 
-    print(f"Original URL : {components['original_url']}")
-    print(f"Protocol     : {components['protocol']}")
-    print(f"Domain       : {components['domain']}")
-    print(f"Path         : {components['path'] or '(none)'}")
-    print(f"Query        : {components['query'] or '(none)'}")
-    print(f"Fragment     : {components['fragment'] or '(none)'}")
+    print("\nOriginal URL")
+    print(components["original_url"])
 
-    print("\nDetected Keywords")
+    print("\n" + "-" * 60)
+
+    print("Protocol :", components["protocol"].upper())
+    print("Domain   :", components["domain"])
+    print("Path     :", components["path"] or "(none)")
+    print("Query    :", components["query"] or "(none)")
+    print("Fragment :", components["fragment"] or "(none)")
+
+    print("\n" + "-" * 60)
+
+    print("Detected Keywords")
 
     if keywords:
+
         for keyword in keywords:
-            print(f"{keyword}")
+            print(f"✓ {keyword}")
+
     else:
+
         print("None")
+
+    print("\n" + "-" * 60)
+
+    print(f"Risk Score : {score}/100")
+
+    if level == "LOW":
+        print("Risk Level : LOW")
+
+    elif level == "MEDIUM":
+        print("Risk Level : MEDIUM")
+
+    else:
+        print("Risk Level : HIGH")
+
+    print("\nRecommendations")
+
+    print("• Verify the official website.")
+    print("• Do not enter banking credentials immediately.")
+    print("• Check SSL certificate.")
+    print("• Compare the domain carefully.")
 
     print("=" * 60)
