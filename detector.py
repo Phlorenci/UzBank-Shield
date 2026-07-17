@@ -1,4 +1,9 @@
-from utils import get_user_input , extract_url_components
+from utils import (
+    get_user_input,
+    extract_url_components,
+    validate_url
+)
+
 """
 ==================================================
 UzBank Shield
@@ -11,9 +16,10 @@ Core URL Analysis Engine
 ==================================================
 """
 
+
 def print_banner():
     print("=" * 50)
-    print("🛡️  UZBANK SHIELD")
+    print("UZBANK SHIELD")
     print("Version 0.2.0")
     print("Core URL Analysis Engine")
     print("=" * 50)
@@ -28,8 +34,20 @@ def print_banner():
 def main():
     print_banner()
 
+    # Get user input
     url = get_user_input()
 
+    # Validate URL before continuing
+    if not validate_url(url):
+        print("\n Invalid URL format.")
+        print("Please enter a valid website address.")
+        print("\nExamples:")
+        print("  • kapitalbank.uz")
+        print("  • https://kapitalbank.uz")
+        print("  • https://google.com/search")
+        return
+
+    # Extract URL components
     components = extract_url_components(url)
 
     print("\n========== URL COMPONENTS ==========\n")

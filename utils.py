@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+import re
 """
 Utility functions for UzBank Shield
 """
@@ -37,3 +38,30 @@ def extract_url_components(url):
         "query": parsed.query,
         "fragment": parsed.fragment
     }
+
+def validate_url(url):
+    """
+    Validate the URL format.
+    Returns True if valid, False otherwise.
+    """
+
+    # Add HTTPS if missing
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+
+    parsed = urlparse(url)
+
+    # Must use http or https
+    if parsed.scheme not in ("http", "https"):
+        return False
+
+    # Domain cannot be empty
+    if not parsed.netloc:
+        return False
+
+    # Simple domain validation
+    domain_pattern = re.compile(
+        r"^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$"
+    )
+
+    return bool(domain_pattern.match(parsed.netloc))
