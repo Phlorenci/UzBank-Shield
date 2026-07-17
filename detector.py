@@ -2,6 +2,8 @@ from core.banner import print_banner
 from core.input_handler import get_user_input
 from core.parser import extract_url_components
 from core.validator import validate_url
+from core.scanner import scan_for_keywords
+from core.reporter import print_analysis_report
 
 
 def main():
@@ -11,21 +13,16 @@ def main():
 
     if not validate_url(url):
         print("\nInvalid URL format.")
-        print("Please enter a valid URL.")
         return
 
     components = extract_url_components(url)
 
-    print("\n========== URL COMPONENTS ==========\n")
+    keywords = scan_for_keywords(components)
 
-    print(f"Original URL : {components['original_url']}")
-    print(f"Protocol     : {components['protocol']}")
-    print(f"Domain       : {components['domain']}")
-    print(f"Path         : {components['path'] or '(none)'}")
-    print(f"Query        : {components['query'] or '(none)'}")
-    print(f"Fragment     : {components['fragment'] or '(none)'}")
-
-    print("\n====================================")
+    print_analysis_report(
+        components,
+        keywords
+    )
 
 
 if __name__ == "__main__":

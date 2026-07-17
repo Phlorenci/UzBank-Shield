@@ -1,13 +1,26 @@
 [
     "login",
+    "logon",
     "signin",
     "verify",
+    "verification",
     "secure",
+    "security",
     "account",
     "password",
-    "update",
     "confirm",
+    "update",
     "support",
     "reset",
-    "bank"
+    "wallet",
+    "payment",
+    "bank",
+    "card",
+    "otp",
+    "pin",
+    "sms",
+    "unlock",
+    "authenticate",
+    "identity",
+    "session"
 ]
