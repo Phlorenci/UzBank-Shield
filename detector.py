@@ -1,3 +1,4 @@
+from utils import get_user_input
 """
 ==================================================
 UzBank Shield
@@ -27,10 +28,10 @@ def print_banner():
 def main():
     print_banner()
 
-    url = input("\nEnter a website URL: ")
+    url = get_user_input()
 
-    print("\nYou entered:")
-    print(url)
+    print("\n URL received successfully!")
+    print(f"Input: {url}")
 
 
 if __name__ == "__main__":
