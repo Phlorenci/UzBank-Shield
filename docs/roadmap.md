@@ -39,50 +39,78 @@ Completed
 
 ---
 
-# Version 1.0 – Intelligent Bank Verification
+# Version 0.4 – Intelligent Bank Verification
 
 Planned
 
 - Official Uzbek bank database
-- Official domain verification
-- Domain similarity (typosquatting) detection
-- Homograph attack detection
-- SSL certificate verification
-- WHOIS domain age analysis
-- Improved risk calculation
-- Better reporting
+- Official domain matching
+- Better bank detection
 
 ---
 
-# Version 1.1
+# Version 0.5 – Advanced domain analysis
 
 Planned
 
-- Uzbek language support
-- Russian language support
-- English language support
+- Typosquatting detection
+- Homograph detection
+- Suspicious TLD detection
+
+---
+
+# Version 0.6 – Website verifcation
+
+Planned
+
+- SSL certificate checks
+- WHOIS/domain age
+- HTTPS improvements
+
+---
+
+# Version 0.7 – User Experience
+
+Planned
+
+- Uzbek language
+- Russian language
+- English language
 - Configuration file
-- Improved logging
+- Logging
 
 ---
 
-# Version 1.5
+# Version 0.8 – Desktop Application
 
 Planned
 
-- Desktop application (PySide6)
+- PySide6 GUI
 - Scan history
-- Settings page
-- Export reports
+- Settings
+- Better reports
 
 ---
 
-# Version 2.0
+# Version 0.9 - Ecosystem
 
 Planned
 
-- Telegram Bot
-- Browser Extension
-- Android application
-- Automatic updates
-- Cloud synchronization (optional)
+- Telegram bot
+- Browser extension
+- Performance improvements
+
+--- 
+
+# Version 1.0 - Fist Stable Release
+
+Planned
+
+- Complete analysis engine
+- Desktop application
+- Multilingual support
+- Official bank verification
+- SSL & WHOIS checks
+- Documentation
+
+--- 
