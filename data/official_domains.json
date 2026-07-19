@@ -1,0 +1,39 @@
+{
+    "version": "1.0",
+    "country": "Uzbekistan",
+    "description": "Verified public domains of licensed commercial banks in Uzbekistan.",
+    "last_updated": "2026-07",
+
+    "banks": [
+        {
+            "name": "Kapitalbank",
+            "domains": [
+                "kapitalbank.uz"
+            ]
+        },
+        {
+            "name": "Hamkorbank",
+            "domains": [
+                "hamkorbank.uz"
+            ]
+        },
+        {
+            "name": "Ipoteka Bank",
+            "domains": [
+                "ipotekabank.uz"
+            ]
+        },
+        {
+            "name": "Agrobank",
+            "domains": [
+                "agrobank.uz"
+            ]
+        },
+        {
+            "name": "Asakabank",
+            "domains": [
+                "asakabank.uz"
+            ]
+        }
+    ]
+}
