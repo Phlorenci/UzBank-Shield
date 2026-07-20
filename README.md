@@ -25,39 +25,6 @@ Current version: **v0.4.0**
 - Security recommendations
 - Modular project architecture
 
----
-
-## Project Structure
-
-```text
-UzBank-Shield
-│
-├── core/
-│   ├── banner.py
-│   ├── input_handler.py
-│   ├── parser.py
-│   ├── reporter.py
-│   ├── risk.py
-│   ├── scanner.py
-│   ├── theme.py
-│   └── validator.py
-│
-├── data/
-│   └── phishing_keywords.json
-│
-├── docs/
-│
-├── tests/
-│
-├── assets/
-│
-├── detector.py
-├── requirements.txt
-└── README.md
-```
-
----
-
 ## Installation
 
 Clone the repository.
@@ -100,29 +67,6 @@ python detector.py
 
 ---
 
-## Example
-
-Input
-
-```
-https://kapitalbank-login.uz/reset-password
-```
-
-Output
-
-```
-Risk Score : 60/100
-
-Detected keywords
-
-login
-bank
-reset
-password
-```
-
----
-
 ## Roadmap
 
 ## Documentation
@@ -141,9 +85,10 @@ Long-term plans include:
 - Desktop application
 - Telegram bot
 - Browser extension
-- Android application
 - Uzbek, Russian and English interface
-
+- Payment Page Safety Checker
+- Community Threat Database
+- Anti-Scam Protection
 ---
 
 ## Disclaimer
