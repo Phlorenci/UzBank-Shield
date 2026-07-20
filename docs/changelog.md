@@ -13,6 +13,18 @@
 
 ---
 
-## Upcoming
+## Version 0.4.0
 
-Version 1.0 will introduce verification against official Uzbek bank domains and additional phishing detection techniques.
+### Added
+
+- Official Uzbek bank domain database
+- Official domain verification engine
+- Domain verification reporting
+- Bank identification
+- Improved security recommendations
+
+### Improved
+
+- Analysis report layout
+- Project architecture
+- Verification workflow
