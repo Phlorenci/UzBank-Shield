@@ -5,6 +5,8 @@ from core.validator import validate_url
 from core.scanner import scan_for_keywords
 from core.reporter import print_analysis_report
 from core.risk import calculate_risk_score
+from core.database import load_official_domains
+from core.verifier import verify_domain
 
 
 def main():
@@ -21,12 +23,18 @@ def main():
     keywords = scan_for_keywords(components)
 
     score, level = calculate_risk_score(keywords)
+    database = load_official_domains()
+    verification = verify_domain(
+        components["original_url"],
+        database
+    )
 
     print_analysis_report(
         components,
         keywords,
         score,
-        level
+        level,
+        verification
     )
 
 

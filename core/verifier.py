@@ -4,11 +4,7 @@ from urllib.parse import urlparse
 
 
 def normalize_domain(domain):
-    """
-    Normalize domains before comparison.
-    """
-
-    domain = domain.lower()
+    domain = domain.lower().strip()
 
     if domain.startswith("www."):
         domain = domain[4:]
@@ -37,11 +33,13 @@ def verify_domain(url, database):
                 return {
                     "verified": True,
                     "bank": bank["name"],
-                    "domain": official_domain
+                    "official_domain": official_domain,
+                    "message": "Official bank domain verified"
                 }
 
     return {
         "verified": False,
-        "bank": None,
-        "domain": None
+        "bank": "Unknown",
+        "official_domain": None,
+        "message": "Domain is not an official bank domain"
     }
