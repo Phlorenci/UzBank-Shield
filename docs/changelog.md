@@ -28,3 +28,24 @@
 - Analysis report layout
 - Project architecture
 - Verification workflow
+
+## Version 0.5
+
+### Added
+
+- Domain similarity engine
+- Intelligent bank verification
+- Typosquatting detection
+- Suspicious TLD detection
+
+### Improved
+
+- Risk analysis algorithm
+- Terminal security report
+- Recommendations
+
+### Testing
+
+- Added unit tests for similarity
+- Added unit tests for verifier
+- Added unit tests for TLD detection
