@@ -2,7 +2,8 @@ def calculate_risk_score(
     keywords,
     verification,
     suspicious_tld,
-    connection
+    connection,
+    ssl_info
 ):
     score = 0
 
@@ -13,19 +14,17 @@ def calculate_risk_score(
     score += len(keywords) * 15
 
     # ---------------------------------
-    # Official verification
+    # Official bank verification
     # ---------------------------------
 
     if verification["verified"]:
-
         score -= 20
 
     # ---------------------------------
-    # Possible bank impersonation
+    # Bank impersonation
     # ---------------------------------
 
     if verification["possible_typosquatting"]:
-
         score += 35
 
     # ---------------------------------
@@ -33,15 +32,13 @@ def calculate_risk_score(
     # ---------------------------------
 
     if suspicious_tld:
-
         score += 20
 
     # ---------------------------------
-    # HTTP instead of HTTPS
+    # HTTP connection
     # ---------------------------------
 
     if not connection["https"]:
-
         score += 15
 
     # ---------------------------------
@@ -49,9 +46,21 @@ def calculate_risk_score(
     # ---------------------------------
 
     if not connection["reachable"]:
-
         score += 10
 
+    # ---------------------------------
+    # SSL Certificate
+    # ---------------------------------
+    
+    if ssl_info["valid"] is False:
+        score += 25
+    elif (
+        ssl_info["valid"] is True
+        and ssl_info["days_remaining"] is not None
+        and ssl_info["days_remaining"] < 30
+    ):
+        score += 10
+        
     # ---------------------------------
     # Clamp score
     # ---------------------------------
@@ -59,19 +68,16 @@ def calculate_risk_score(
     score = max(0, min(score, 100))
 
     # ---------------------------------
-    # Risk Level
+    # Risk level
     # ---------------------------------
 
     if score < 30:
-
         level = "LOW"
 
     elif score < 60:
-
         level = "MEDIUM"
 
     else:
-
         level = "HIGH"
 
     return score, level

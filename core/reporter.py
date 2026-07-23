@@ -14,7 +14,8 @@ def print_analysis_report(
     level,
     verification,
     suspicious_tld,
-    connection
+    connection,
+    ssl_info
 ):
     # -------------------------------------------------
     # SUMMARY
@@ -104,6 +105,43 @@ def print_analysis_report(
     console.print(connection_table)
 
     # -------------------------------------------------
+    # SSL CERTIFICATE
+    # -------------------------------------------------
+
+    ssl_table = Table(title="SSL Certificate")
+
+    ssl_table.add_column("Property", style="cyan")
+    ssl_table.add_column("Value")
+
+    if ssl_info["valid"] is True:
+        status = "[green]Valid[/green]"
+    elif ssl_info["valid"] is False:
+        status = "[red]Invalid[/red]"
+    else:
+        status = "[yellow]Unknown[/yellow]"
+    
+    ssl_table.add_row("Status", status)
+
+    ssl_table.add_row(
+        "Issuer",
+        ssl_info["issuer"] or "-"
+    )
+
+    ssl_table.add_row(
+        "Expires",
+        ssl_info["expires"] or "-"
+    )
+
+    ssl_table.add_row(
+        "Days Remaining",
+        str(ssl_info["days_remaining"])
+        if ssl_info["days_remaining"] is not None
+        else "-"
+    )
+
+    console.print(ssl_table)
+
+    # -------------------------------------------------
     # OFFICIAL DOMAIN VERIFICATION
     # -------------------------------------------------
 
@@ -184,6 +222,15 @@ def print_analysis_report(
         "HTTPS",
         "PASS" if connection["https"] else "FAIL"
     )
+
+    if ssl_info["valid"] is True:
+        ssl_result = "PASS"
+    elif ssl_info["valid"] is False:
+        ssl_result = "FAIL"
+    else:
+        ssl_result = "Not Checked"
+    
+    analysis.add_row("SSL Certificate", ssl_result)
 
     analysis.add_row(
         "Reachable",
@@ -272,6 +319,20 @@ def print_analysis_report(
 
     recommendations.append(
         "• Contact the bank if you are unsure.\n"
+    )
+
+    if not ssl_info["valid"]:
+        recommendations.append(
+        "• This website does not have a valid SSL certificate.\n"
+        )
+
+    elif (
+    ssl_info["days_remaining"] is not None
+    and ssl_info["days_remaining"] < 30
+    ):
+        
+        recommendations.append(
+        "• The SSL certificate will expire soon.\n"
     )
 
     console.print(

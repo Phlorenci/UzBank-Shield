@@ -9,6 +9,7 @@ from core.database import load_official_domains
 from core.verifier import verify_domain
 from core.tld import is_suspicious_tld
 from core.https_checker import check_https
+from core.ssl_checker import check_ssl_certificate
 
 
 def main():
@@ -62,6 +63,24 @@ def main():
     )
 
     # ---------------------------------
+    # SSL verification
+    # ---------------------------------
+
+    if connection["https"]:
+        ssl_info = check_ssl_certificate(
+            components["original_url"]
+        )
+        
+    else:
+        ssl_info = {
+            "valid": None,
+            "issuer": None,
+            "expires": None,
+            "days_remaining": None,
+            "error": "Skipped (HTTP connection)"
+        }
+
+    # ---------------------------------
     # Risk score
     # ---------------------------------
 
@@ -69,7 +88,8 @@ def main():
         keywords,
         verification,
         suspicious_tld,
-        connection
+        connection,
+        ssl_info
     )
 
     # ---------------------------------
@@ -83,7 +103,8 @@ def main():
         level,
         verification,
         suspicious_tld,
-        connection
+        connection,
+        ssl_info
     )
 
 

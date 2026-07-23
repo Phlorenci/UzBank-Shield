@@ -1,5 +1,19 @@
 from core.risk import calculate_risk_score
 
+SAFE_SSL = {
+    "valid": True,
+    "days_remaining": 365
+}
+
+INVALID_SSL = {
+    "valid": False,
+    "days_remaining": None
+}
+
+EXPIRING_SSL = {
+    "valid": True,
+    "days_remaining": 10
+}
 
 SAFE_CONNECTION = {
     "https": True,
@@ -28,7 +42,8 @@ def test_verified_safe_domain():
         [],
         verification,
         False,
-        SAFE_CONNECTION
+        SAFE_CONNECTION,
+        SAFE_SSL
     )
 
     assert score == 0
@@ -46,7 +61,8 @@ def test_keyword_risk():
         ["login", "verify"],
         verification,
         False,
-        SAFE_CONNECTION
+        SAFE_CONNECTION,
+        SAFE_SSL
     )
 
     assert score == 30
@@ -64,7 +80,8 @@ def test_typosquatting():
         [],
         verification,
         False,
-        SAFE_CONNECTION
+        SAFE_CONNECTION,
+        SAFE_SSL
     )
 
     assert score == 35
@@ -82,7 +99,8 @@ def test_suspicious_tld():
         [],
         verification,
         True,
-        SAFE_CONNECTION
+        SAFE_CONNECTION,
+        SAFE_SSL
     )
 
     assert score == 20
@@ -100,7 +118,8 @@ def test_http_connection():
         [],
         verification,
         False,
-        HTTP_CONNECTION
+        HTTP_CONNECTION,
+        SAFE_SSL
     )
 
     assert score == 15
@@ -118,8 +137,45 @@ def test_unreachable_connection():
         [],
         verification,
         False,
-        UNREACHABLE_CONNECTION
+        UNREACHABLE_CONNECTION,
+        SAFE_SSL
     )
+
+    def test_invalid_ssl():
+        verification = {
+            "verified": False,
+            "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        False,
+        SAFE_CONNECTION,
+        INVALID_SSL
+    )
+
+    assert score == 25
+    assert level == "LOW"
+
+
+def test_expiring_ssl():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        False,
+        SAFE_CONNECTION,
+        EXPIRING_SSL
+    )
+
+    assert score == 10
+    assert level == "LOW"
 
     assert score == 10
     assert level == "LOW"
