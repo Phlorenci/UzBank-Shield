@@ -10,6 +10,7 @@ from core.verifier import verify_domain
 from core.tld import is_suspicious_tld
 from core.https_checker import check_https
 from core.ssl_checker import check_ssl_certificate
+from core.whois_checker import check_domain_info
 
 
 def main():
@@ -81,6 +82,14 @@ def main():
         }
 
     # ---------------------------------
+    # Domain information (WHOIS)
+    # ---------------------------------
+
+    domain_info = check_domain_info(
+        components["domain"]
+    )
+
+    # ---------------------------------
     # Risk score
     # ---------------------------------
 
@@ -89,7 +98,8 @@ def main():
         verification,
         suspicious_tld,
         connection,
-        ssl_info
+        ssl_info,
+        domain_info
     )
 
     # ---------------------------------
@@ -104,7 +114,8 @@ def main():
         verification,
         suspicious_tld,
         connection,
-        ssl_info
+        ssl_info,
+        domain_info
     )
 
 

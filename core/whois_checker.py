@@ -12,6 +12,15 @@ from datetime import datetime
 
 import whois
 
+def _strip_timezone(value):
+    # WHOIS servers inconsistently return naive or timezone-aware
+    # datetimes. Normalize to naive UTC-ish local time so date math
+    # against datetime.now() never raises.
+    if value.tzinfo is not None:
+        return value.replace(tzinfo=None)
+
+    return value
+
 
 def _normalize_creation_date(creation_date):
     # python-whois sometimes returns a single value and
@@ -20,7 +29,7 @@ def _normalize_creation_date(creation_date):
         creation_date = creation_date[0] if creation_date else None
 
     if isinstance(creation_date, datetime):
-        return creation_date
+        return _strip_timezone(creation_date)
 
     if isinstance(creation_date, str):
         for date_format in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%d-%m-%Y"):

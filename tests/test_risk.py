@@ -30,6 +30,13 @@ UNREACHABLE_CONNECTION = {
     "reachable": False
 }
 
+SAFE_DOMAIN_INFO = {
+    "available": False,
+    "registrar": None,
+    "created": None,
+    "age_days": None,
+    "error": None
+}
 
 def test_verified_safe_domain():
 
@@ -43,7 +50,8 @@ def test_verified_safe_domain():
         verification,
         False,
         SAFE_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 0
@@ -62,7 +70,8 @@ def test_keyword_risk():
         verification,
         False,
         SAFE_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 30
@@ -81,7 +90,8 @@ def test_typosquatting():
         verification,
         False,
         SAFE_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 35
@@ -100,7 +110,8 @@ def test_suspicious_tld():
         verification,
         True,
         SAFE_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 20
@@ -119,7 +130,8 @@ def test_http_connection():
         verification,
         False,
         HTTP_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 15
@@ -138,7 +150,8 @@ def test_unreachable_connection():
         verification,
         False,
         UNREACHABLE_CONNECTION,
-        SAFE_SSL
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     def test_invalid_ssl():
@@ -152,7 +165,8 @@ def test_unreachable_connection():
         verification,
         False,
         SAFE_CONNECTION,
-        INVALID_SSL
+        INVALID_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 25
@@ -171,7 +185,8 @@ def test_expiring_ssl():
         verification,
         False,
         SAFE_CONNECTION,
-        EXPIRING_SSL
+        EXPIRING_SSL,
+        SAFE_DOMAIN_INFO
     )
 
     assert score == 10

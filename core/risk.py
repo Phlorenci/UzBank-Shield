@@ -3,7 +3,8 @@ def calculate_risk_score(
     verification,
     suspicious_tld,
     connection,
-    ssl_info
+    ssl_info,
+    domain_info
 ):
     score = 0
 
@@ -60,6 +61,18 @@ def calculate_risk_score(
         and ssl_info["days_remaining"] < 30
     ):
         score += 10
+
+    # ---------------------------------
+    # Domain age
+    # ---------------------------------
+
+    if domain_info["available"] and domain_info["age_days"] is not None:
+
+        if domain_info["age_days"] < 30:
+            score += 25
+
+        elif domain_info["age_days"] < 180:
+            score += 10
         
     # ---------------------------------
     # Clamp score

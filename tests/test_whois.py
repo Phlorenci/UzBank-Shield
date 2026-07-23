@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from core.whois_checker import (
     _normalize_creation_date,
@@ -9,12 +9,12 @@ from core.whois_checker import (
 
 def test_normalize_creation_date_from_datetime():
 
-    value = datetime(2015, 6, 1)
+    aware_value = datetime(2015, 6, 1,tzinfo=timezone.utc)
 
-    result = _normalize_creation_date(value)
+    result = _normalize_creation_date(aware_value)
 
-    assert result == value
-
+    assert result.tzinfo is None
+    assert result == datetime(2015, 6, 1)
 
 def test_normalize_creation_date_from_list():
 

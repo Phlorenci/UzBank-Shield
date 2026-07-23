@@ -15,7 +15,8 @@ def print_analysis_report(
     verification,
     suspicious_tld,
     connection,
-    ssl_info
+    ssl_info,
+    domain_info
 ):
     # -------------------------------------------------
     # SUMMARY
@@ -142,6 +143,42 @@ def print_analysis_report(
     console.print(ssl_table)
 
     # -------------------------------------------------
+    # DOMAIN INFORMATION
+    # -------------------------------------------------
+
+    domain_table = Table(title="Domain Information")
+
+    domain_table.add_column("Property", style="cyan")
+    domain_table.add_column("Value")
+
+    domain_table.add_row(
+        "WHOIS Data",
+        "Available" if domain_info["available"] else "Not Available"
+    )
+
+    domain_table.add_row(
+        "Registrar",
+        domain_info["registrar"] or "-"
+    )
+
+    domain_table.add_row(
+        "Created",
+        domain_info["created"] or "-"
+    )
+
+    if domain_info["age_days"] is not None:
+        age_display = f'{domain_info["age_days"]} days'
+    else:
+        age_display = "-"
+
+    domain_table.add_row(
+        "Domain Age",
+        age_display
+    )
+
+    console.print(domain_table)
+
+    # -------------------------------------------------
     # OFFICIAL DOMAIN VERIFICATION
     # -------------------------------------------------
 
@@ -231,6 +268,18 @@ def print_analysis_report(
         ssl_result = "Not Checked"
     
     analysis.add_row("SSL Certificate", ssl_result)
+
+    if domain_info["available"] and domain_info["age_days"] is not None:
+        if domain_info["age_days"] < 30:
+            age_result = "FAIL"
+        elif domain_info["age_days"] < 180:
+            age_result = "WARNING"
+        else:
+            age_result = "PASS"
+    else:
+        age_result = "Not Checked"
+
+    analysis.add_row("Domain Age", age_result)
 
     analysis.add_row(
         "Reachable",
@@ -334,6 +383,17 @@ def print_analysis_report(
         recommendations.append(
         "• The SSL certificate will expire soon.\n"
     )
+
+    if domain_info["available"] and domain_info["age_days"] is not None:
+
+        if domain_info["age_days"] < 30:
+            recommendations.append(
+                "• This domain was registered very recently, which is common for phishing sites.\n"
+            )
+        elif domain_info["age_days"] < 180:
+            recommendations.append(
+                "• This domain is relatively new; proceed with extra caution.\n"
+            )
 
     console.print(
         Panel(
