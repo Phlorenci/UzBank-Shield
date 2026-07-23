@@ -29,17 +29,34 @@ The application follows a modular architecture where each component has a single
              Terminal Interface
 ```
 
-## Component Responsibilities
+UzBank Shield
 
-| Module | Responsibility |
-|---------|----------------|
-| Input Handler | Reads user input |
-| URL Validator | Checks whether the URL format is valid |
-| URL Parser | Extracts protocol, domain, path and query |
-| Keyword Scanner | Detects suspicious phishing-related keywords |
-| Domain Analysis | Performs additional domain-related checks (planned for Version 1.0) |
-| Risk Calculator | Combines detection results into a risk score |
-| Report Generator | Formats analysis results |
-| Terminal Interface | Displays the final report to the user |
-
-The modular design allows new detection techniques to be added without changing the overall application flow. Future versions will extend the **Domain Analysis** component with SSL verification, domain similarity detection, WHOIS lookups, and official Uzbek bank verification.
+│
+├── detector.py
+│
+├── core
+│   ├── banner.py
+│   ├── input_handler.py
+│   ├── validator.py
+│   ├── parser.py
+│   ├── scanner.py
+│   ├── similarity.py
+│   ├── verifier.py
+│   ├── tld.py
+│   ├── risk.py
+│   ├── reporter.py
+│   ├── database.py
+│   └── theme.py
+│
+├── database
+│   └── banks.json
+│
+├── tests
+│   ├── test_parser.py
+│   ├── test_validator.py
+│   ├── test_risk.py
+│   ├── test_similarity.py
+│   ├── test_verifier.py
+│   └── test_tld.py
+│
+└── docs
