@@ -1,6 +1,8 @@
 from difflib import SequenceMatcher
 from urllib.parse import urlparse
 
+SIMILARITY_THRESHOLD = 80
+
 
 def calculate_similarity(domain1, domain2):
     similarity = SequenceMatcher(
@@ -43,5 +45,16 @@ def find_closest_domain(url, database):
                     "domain": official_domain,
                     "similarity": similarity
                 }
+
+    if highest_similarity < SIMILARITY_THRESHOLD:
+
+        return {
+            "bank": None,
+            "domain": None,
+            "similarity": highest_similarity,
+            "matched": False
+        }
+
+    best_match["matched"] = True
 
     return best_match

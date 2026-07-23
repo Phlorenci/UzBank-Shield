@@ -12,13 +12,9 @@ def print_analysis_report(
     level,
     verification
 ):
-    """
-    Display the complete security analysis report.
-    """
-
-
+    # -----------------------------
     # URL INFORMATION
- 
+    # -----------------------------
     url_table = Table(title="URL Information")
 
     url_table.add_column("Field", style="cyan", no_wrap=True)
@@ -33,26 +29,42 @@ def print_analysis_report(
 
     console.print(url_table)
 
+    # -----------------------------
     # OFFICIAL DOMAIN VERIFICATION
+    # -----------------------------
     verification_table = Table(title="Official Domain Verification")
 
     verification_table.add_column("Property", style="cyan")
-    verification_table.add_column("Value")
+    verification_table.add_column("Value", style="white")
 
-    if verification["verified"]:
-        status = "[green]✔ Verified[/green]"
-    else:
-        status = "[red]✖ Not Verified[/red]"
+    verification_table.add_row(
+        "Status",
+        "✔ Verified" if verification["verified"] else "✖ Not Verified"
+    )
 
-    verification_table.add_row("Status", status)
-    verification_table.add_row("Bank", verification["bank"])
+    verification_table.add_row(
+        "Bank",
+        verification["bank"] or "-"
+    )
+
     verification_table.add_row(
         "Official Domain",
         verification["official_domain"] or "-"
     )
+
     verification_table.add_row(
-        "Message",
-        verification["message"]
+        "Closest Domain",
+        verification["closest_domain"] or "-"
+    )
+
+    verification_table.add_row(
+        "Similarity",
+        f'{verification["similarity"]}%'
+    )
+
+    verification_table.add_row(
+        "Possible Typosquatting",
+        "Yes" if verification["possible_typosquatting"] else "No"
     )
 
     console.print(verification_table)
@@ -65,9 +77,13 @@ def print_analysis_report(
     keyword_table.add_column("Keyword", style="yellow")
 
     if keywords:
+
         for keyword in keywords:
+
             keyword_table.add_row(keyword)
+
     else:
+
         keyword_table.add_row(
             "No suspicious phishing keywords detected."
         )
@@ -78,10 +94,15 @@ def print_analysis_report(
     # RISK SCORE
     # -----------------------------
     if level == "LOW":
+
         color = "green"
+
     elif level == "MEDIUM":
+
         color = "yellow"
+
     else:
+
         color = "red"
 
     console.print(
@@ -104,31 +125,39 @@ def print_analysis_report(
     )
 
     if verification["verified"]:
+
         recommendations.append(
-            "✓ This website matches an official bank domain.\n"
-        )
-    else:
-        recommendations.append(
-            "⚠ This domain is not present in the official database.\n"
+            "✔ This website matches an official bank domain.\n"
         )
 
-    recommendations.append(
-        "• Compare the website with the bank's official website.\n"
-    )
+    else:
+
+        recommendations.append(
+            "• Verify the official bank domain.\n"
+        )
+
+        if verification["possible_typosquatting"]:
+
+            recommendations.append(
+                "• This website may be impersonating an official bank.\n"
+            )
+
     recommendations.append(
         "• Never share OTP or SMS verification codes.\n"
     )
+
     recommendations.append(
-        "• Verify the SSL certificate before logging in.\n"
+        "• Check the SSL certificate before logging in.\n"
     )
+
     recommendations.append(
-        "• Contact your bank through official channels if unsure."
+        "• Contact your bank through official channels if unsure.\n"
     )
 
     console.print(
         Panel(
             recommendations,
-            border_style="blue",
-            title="Security Recommendations"
+            title="Security Recommendations",
+            border_style="blue"
         )
     )
