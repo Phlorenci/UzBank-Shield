@@ -1,6 +1,22 @@
 from core.risk import calculate_risk_score
 
 
+SAFE_CONNECTION = {
+    "https": True,
+    "reachable": True
+}
+
+HTTP_CONNECTION = {
+    "https": False,
+    "reachable": True
+}
+
+UNREACHABLE_CONNECTION = {
+    "https": True,
+    "reachable": False
+}
+
+
 def test_verified_safe_domain():
 
     verification = {
@@ -11,7 +27,8 @@ def test_verified_safe_domain():
     score, level = calculate_risk_score(
         [],
         verification,
-        False
+        False,
+        SAFE_CONNECTION
     )
 
     assert score == 0
@@ -28,7 +45,8 @@ def test_keyword_risk():
     score, level = calculate_risk_score(
         ["login", "verify"],
         verification,
-        False
+        False,
+        SAFE_CONNECTION
     )
 
     assert score == 30
@@ -45,7 +63,8 @@ def test_typosquatting():
     score, level = calculate_risk_score(
         [],
         verification,
-        False
+        False,
+        SAFE_CONNECTION
     )
 
     assert score == 35
@@ -62,8 +81,45 @@ def test_suspicious_tld():
     score, level = calculate_risk_score(
         [],
         verification,
-        True
+        True,
+        SAFE_CONNECTION
     )
 
     assert score == 20
+    assert level == "LOW"
+
+
+def test_http_connection():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        False,
+        HTTP_CONNECTION
+    )
+
+    assert score == 15
+    assert level == "LOW"
+
+
+def test_unreachable_connection():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        False,
+        UNREACHABLE_CONNECTION
+    )
+
+    assert score == 10
     assert level == "LOW"

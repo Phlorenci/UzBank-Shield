@@ -8,6 +8,7 @@ from core.risk import calculate_risk_score
 from core.database import load_official_domains
 from core.verifier import verify_domain
 from core.tld import is_suspicious_tld
+from core.https_checker import check_https
 
 
 def main():
@@ -21,9 +22,21 @@ def main():
         print("\nInvalid URL format.")
         return
 
+    # ---------------------------------
+    # URL analysis
+    # ---------------------------------
+
     components = extract_url_components(url)
 
+    # ---------------------------------
+    # Keyword analysis
+    # ---------------------------------
+
     keywords = scan_for_keywords(components)
+
+    # ---------------------------------
+    # Official bank verification
+    # ---------------------------------
 
     database = load_official_domains()
 
@@ -32,15 +45,36 @@ def main():
         database
     )
 
+    # ---------------------------------
+    # Suspicious TLD
+    # ---------------------------------
+
     suspicious_tld = is_suspicious_tld(
         components["original_url"]
     )
 
+    # ---------------------------------
+    # HTTPS analysis
+    # ---------------------------------
+
+    connection = check_https(
+        components["original_url"]
+    )
+
+    # ---------------------------------
+    # Risk score
+    # ---------------------------------
+
     score, level = calculate_risk_score(
         keywords,
         verification,
-        suspicious_tld
+        suspicious_tld,
+        connection
     )
+
+    # ---------------------------------
+    # Report
+    # ---------------------------------
 
     print_analysis_report(
         components,
@@ -48,7 +82,8 @@ def main():
         score,
         level,
         verification,
-        suspicious_tld
+        suspicious_tld,
+        connection
     )
 
 

@@ -13,23 +13,24 @@ def print_analysis_report(
     score,
     level,
     verification,
-    suspicious_tld
+    suspicious_tld,
+    connection
 ):
     # -------------------------------------------------
-    # SCAN SUMMARY
+    # SUMMARY
     # -------------------------------------------------
 
     if level == "LOW":
         color = "green"
-        recommendation = "Website appears safe."
+        recommendation = "Low Risk"
 
     elif level == "MEDIUM":
         color = "yellow"
-        recommendation = "Proceed with caution."
+        recommendation = "Proceed With Caution"
 
     else:
         color = "red"
-        recommendation = "Do not trust this website."
+        recommendation = "High Risk"
 
     summary = Table(title="Scan Summary")
 
@@ -52,11 +53,6 @@ def print_analysis_report(
     )
 
     summary.add_row(
-        "Official Bank",
-        "Yes" if verification["verified"] else "No"
-    )
-
-    summary.add_row(
         "Recommendation",
         recommendation
     )
@@ -69,71 +65,58 @@ def print_analysis_report(
 
     url_table = Table(title="URL Information")
 
-    url_table.add_column(
-        "Field",
-        style="cyan",
-        no_wrap=True
-    )
+    url_table.add_column("Field", style="cyan")
+    url_table.add_column("Value")
 
-    url_table.add_column(
-        "Value",
-        style="white"
-    )
-
-    url_table.add_row(
-        "Original URL",
-        components["original_url"]
-    )
-
-    url_table.add_row(
-        "Protocol",
-        components["protocol"]
-    )
-
-    url_table.add_row(
-        "Domain",
-        components["domain"]
-    )
-
-    url_table.add_row(
-        "Path",
-        components["path"] or "-"
-    )
-
-    url_table.add_row(
-        "Query",
-        components["query"] or "-"
-    )
-
-    url_table.add_row(
-        "Fragment",
-        components["fragment"] or "-"
-    )
+    url_table.add_row("Original URL", components["original_url"])
+    url_table.add_row("Protocol", components["protocol"])
+    url_table.add_row("Domain", components["domain"])
+    url_table.add_row("Path", components["path"] or "-")
+    url_table.add_row("Query", components["query"] or "-")
+    url_table.add_row("Fragment", components["fragment"] or "-")
 
     console.print(url_table)
 
     # -------------------------------------------------
-    # DOMAIN VERIFICATION
+    # WEBSITE CONNECTION
+    # -------------------------------------------------
+
+    connection_table = Table(title="Website Connection")
+
+    connection_table.add_column("Property", style="cyan")
+    connection_table.add_column("Value")
+
+    connection_table.add_row(
+        "Protocol",
+        connection["protocol"]
+    )
+
+    connection_table.add_row(
+        "Reachable",
+        "Yes" if connection["reachable"] else "No"
+    )
+
+    connection_table.add_row(
+        "HTTP Status",
+        str(connection["status_code"] or "-")
+    )
+
+    console.print(connection_table)
+
+    # -------------------------------------------------
+    # OFFICIAL DOMAIN VERIFICATION
     # -------------------------------------------------
 
     verification_table = Table(
         title="Official Domain Verification"
     )
 
-    verification_table.add_column(
-        "Property",
-        style="cyan"
-    )
-
-    verification_table.add_column(
-        "Value"
-    )
+    verification_table.add_column("Property", style="cyan")
+    verification_table.add_column("Value")
 
     verification_table.add_row(
         "Status",
-        "Verified"
-        if verification["verified"]
-        else "Not Verified"
+        "Verified" if verification["verified"] else "Not Verified"
     )
 
     verification_table.add_row(
@@ -158,25 +141,18 @@ def print_analysis_report(
 
     verification_table.add_row(
         "Possible Bank Impersonation",
-        "Yes"
-        if verification["possible_typosquatting"]
-        else "No"
+        "Yes" if verification["possible_typosquatting"] else "No"
     )
 
     console.print(verification_table)
 
     # -------------------------------------------------
-    # KEYWORD ANALYSIS
+    # DETECTED KEYWORDS
     # -------------------------------------------------
 
-    keyword_table = Table(
-        title="Detected Keywords"
-    )
+    keyword_table = Table(title="Detected Keywords")
 
-    keyword_table.add_column(
-        "Keyword",
-        style="yellow"
-    )
+    keyword_table.add_column("Keyword", style="yellow")
 
     if keywords:
 
@@ -194,24 +170,24 @@ def print_analysis_report(
     # RISK ANALYSIS
     # -------------------------------------------------
 
-    analysis = Table(
-        title="Risk Analysis"
-    )
+    analysis = Table(title="Risk Analysis")
 
-    analysis.add_column(
-        "Security Check",
-        style="cyan"
-    )
-
-    analysis.add_column(
-        "Result"
-    )
+    analysis.add_column("Security Check", style="cyan")
+    analysis.add_column("Result")
 
     analysis.add_row(
         "Official Domain",
-        "PASS"
-        if verification["verified"]
-        else "FAIL"
+        "PASS" if verification["verified"] else "FAIL"
+    )
+
+    analysis.add_row(
+        "HTTPS",
+        "PASS" if connection["https"] else "FAIL"
+    )
+
+    analysis.add_row(
+        "Reachable",
+        "PASS" if connection["reachable"] else "FAIL"
     )
 
     analysis.add_row(
@@ -223,9 +199,7 @@ def print_analysis_report(
 
     analysis.add_row(
         "Suspicious TLD",
-        "Yes"
-        if suspicious_tld
-        else "No"
+        "Yes" if suspicious_tld else "No"
     )
 
     analysis.add_row(
@@ -259,28 +233,33 @@ def print_analysis_report(
         style="bold cyan"
     )
 
-    if verification["verified"]:
-
+    if not connection["https"]:
         recommendations.append(
-            "• This domain matches an official bank.\n"
+            "• This website uses HTTP instead of HTTPS.\n"
         )
 
-    else:
+    if not connection["reachable"]:
+        recommendations.append(
+            "• The website could not be reached.\n"
+        )
 
+    if verification["verified"]:
+        recommendations.append(
+            "• The domain matches an official bank.\n"
+        )
+    else:
         recommendations.append(
             "• Verify the domain before entering personal information.\n"
         )
 
     if verification["possible_typosquatting"]:
-
         recommendations.append(
-            "• This website appears to imitate an official bank.\n"
+            "• This website may be impersonating an official bank.\n"
         )
 
     if suspicious_tld:
-
         recommendations.append(
-            "• This website uses a suspicious domain extension.\n"
+            "• This website uses a suspicious top-level domain.\n"
         )
 
     recommendations.append(
