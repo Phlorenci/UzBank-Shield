@@ -1,48 +1,69 @@
 from core.risk import calculate_risk_score
 
 
-verified = {
-    "verified": True
-}
+def test_verified_safe_domain():
 
-unverified = {
-    "verified": False
-}
+    verification = {
+        "verified": True,
+        "possible_typosquatting": False
+    }
 
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        False
+    )
 
-def test_low_risk():
-    score, level = calculate_risk_score([], verified)
-
+    assert score == 0
     assert level == "LOW"
 
 
-def test_medium_risk():
+def test_keyword_risk():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
     score, level = calculate_risk_score(
-        ["login"],
-        unverified
+        ["login", "verify"],
+        verification,
+        False
     )
 
+    assert score == 30
     assert level == "MEDIUM"
 
 
-def test_high_risk():
+def test_typosquatting():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": True
+    }
+
     score, level = calculate_risk_score(
-        ["login", "verify", "bank"],
-        unverified
+        [],
+        verification,
+        False
     )
 
-    assert level == "HIGH"
+    assert score == 35
+    assert level == "MEDIUM"
 
 
-def test_verified_score_lower():
-    verified_score, _ = calculate_risk_score(
-        ["login"],
-        verified
+def test_suspicious_tld():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        True
     )
 
-    unverified_score, _ = calculate_risk_score(
-        ["login"],
-        unverified
-    )
-
-    assert verified_score < unverified_score
+    assert score == 20
+    assert level == "LOW"

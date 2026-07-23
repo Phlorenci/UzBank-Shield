@@ -10,7 +10,8 @@ def print_analysis_report(
     keywords,
     score,
     level,
-    verification
+    verification,
+    suspicious_tld
 ):
     # -----------------------------
     # URL INFORMATION
@@ -91,18 +92,43 @@ def print_analysis_report(
     console.print(keyword_table)
 
     # -----------------------------
+    # RISK ANALYSIS
+    # -----------------------------
+    analysis_table = Table(title="Risk Analysis")
+
+    analysis_table.add_column("Check", style="cyan")
+    analysis_table.add_column("Result")
+
+    analysis_table.add_row(
+        "Official Domain",
+        "✔ Passed" if verification["verified"] else "✖ Failed"
+    )
+
+    analysis_table.add_row(
+        "Typosquatting",
+        "⚠ Detected" if verification["possible_typosquatting"] else "Not detected"
+    )
+
+    analysis_table.add_row(
+        "Suspicious TLD",
+        "⚠ Yes" if suspicious_tld else "No"
+    )
+
+    analysis_table.add_row(
+        "Phishing Keywords",
+        str(len(keywords))
+    )
+
+    console.print(analysis_table)
+
+    # -----------------------------
     # RISK SCORE
     # -----------------------------
     if level == "LOW":
-
         color = "green"
-
     elif level == "MEDIUM":
-
         color = "yellow"
-
     else:
-
         color = "red"
 
     console.print(
@@ -141,6 +167,12 @@ def print_analysis_report(
             recommendations.append(
                 "• This website may be impersonating an official bank.\n"
             )
+
+    if suspicious_tld:
+
+        recommendations.append(
+            "• This website uses a suspicious top-level domain.\n"
+        )
 
     recommendations.append(
         "• Never share OTP or SMS verification codes.\n"
