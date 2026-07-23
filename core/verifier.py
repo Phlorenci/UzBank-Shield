@@ -1,45 +1,29 @@
-#Official domain verification.
-
-from urllib.parse import urlparse
-
-
-def normalize_domain(domain):
-    domain = domain.lower().strip()
-
-    if domain.startswith("www."):
-        domain = domain[4:]
-
-    return domain
+from core.similarity import find_closest_domain, get_domain
 
 
 def verify_domain(url, database):
-    """
-    Compare URL against official bank domains.
-
-    Returns:
-        dict
-    """
-
-    parsed = urlparse(url)
-
-    domain = normalize_domain(parsed.netloc)
+    user_domain = get_domain(url)
 
     for bank in database["banks"]:
 
         for official_domain in bank["domains"]:
 
-            if domain == normalize_domain(official_domain):
+            if user_domain == official_domain.lower():
 
                 return {
                     "verified": True,
                     "bank": bank["name"],
                     "official_domain": official_domain,
-                    "message": "Official bank domain verified"
+                    "closest_domain": official_domain,
+                    "similarity": 100.0
                 }
+
+    closest = find_closest_domain(url, database)
 
     return {
         "verified": False,
-        "bank": "Unknown",
+        "bank": closest["bank"],
         "official_domain": None,
-        "message": "Domain is not an official bank domain"
+        "closest_domain": closest["domain"],
+        "similarity": closest["similarity"]
     }

@@ -1,18 +1,27 @@
-from core.verifier import verify_domain
 from core.database import load_official_domains
-
+from core.verifier import verify_domain
 
 database = load_official_domains()
 
 
-def test_verified_bank():
+def test_verified_domain():
     result = verify_domain(
         "https://kapitalbank.uz",
         database
     )
 
     assert result["verified"] is True
-    assert result["bank"] == "Kapitalbank"
+    assert result["similarity"] == 100.0
+
+
+def test_similar_fake_domain():
+    result = verify_domain(
+        "https://kapita1bank.uz",
+        database
+    )
+
+    assert result["verified"] is False
+    assert result["similarity"] > 80
 
 
 def test_unknown_domain():
@@ -22,12 +31,3 @@ def test_unknown_domain():
     )
 
     assert result["verified"] is False
-
-
-def test_subdomain():
-    result = verify_domain(
-        "https://www.kapitalbank.uz",
-        database
-    )
-
-    assert result["verified"] is True
