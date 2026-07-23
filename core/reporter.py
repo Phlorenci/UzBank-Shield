@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
@@ -13,34 +15,125 @@ def print_analysis_report(
     verification,
     suspicious_tld
 ):
-    # -----------------------------
+    # -------------------------------------------------
+    # SCAN SUMMARY
+    # -------------------------------------------------
+
+    if level == "LOW":
+        color = "green"
+        recommendation = "Website appears safe."
+
+    elif level == "MEDIUM":
+        color = "yellow"
+        recommendation = "Proceed with caution."
+
+    else:
+        color = "red"
+        recommendation = "Do not trust this website."
+
+    summary = Table(title="Scan Summary")
+
+    summary.add_column("Property", style="cyan")
+    summary.add_column("Value", style="white")
+
+    summary.add_row(
+        "Scan Time",
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    )
+
+    summary.add_row(
+        "Risk Score",
+        f"{score}/100"
+    )
+
+    summary.add_row(
+        "Risk Level",
+        f"[{color}]{level}[/{color}]"
+    )
+
+    summary.add_row(
+        "Official Bank",
+        "Yes" if verification["verified"] else "No"
+    )
+
+    summary.add_row(
+        "Recommendation",
+        recommendation
+    )
+
+    console.print(summary)
+
+    # -------------------------------------------------
     # URL INFORMATION
-    # -----------------------------
+    # -------------------------------------------------
+
     url_table = Table(title="URL Information")
 
-    url_table.add_column("Field", style="cyan", no_wrap=True)
-    url_table.add_column("Value", style="white")
+    url_table.add_column(
+        "Field",
+        style="cyan",
+        no_wrap=True
+    )
 
-    url_table.add_row("Original URL", components["original_url"])
-    url_table.add_row("Protocol", components["protocol"])
-    url_table.add_row("Domain", components["domain"])
-    url_table.add_row("Path", components["path"] or "-")
-    url_table.add_row("Query", components["query"] or "-")
-    url_table.add_row("Fragment", components["fragment"] or "-")
+    url_table.add_column(
+        "Value",
+        style="white"
+    )
+
+    url_table.add_row(
+        "Original URL",
+        components["original_url"]
+    )
+
+    url_table.add_row(
+        "Protocol",
+        components["protocol"]
+    )
+
+    url_table.add_row(
+        "Domain",
+        components["domain"]
+    )
+
+    url_table.add_row(
+        "Path",
+        components["path"] or "-"
+    )
+
+    url_table.add_row(
+        "Query",
+        components["query"] or "-"
+    )
+
+    url_table.add_row(
+        "Fragment",
+        components["fragment"] or "-"
+    )
 
     console.print(url_table)
 
-    # -----------------------------
-    # OFFICIAL DOMAIN VERIFICATION
-    # -----------------------------
-    verification_table = Table(title="Official Domain Verification")
+    # -------------------------------------------------
+    # DOMAIN VERIFICATION
+    # -------------------------------------------------
 
-    verification_table.add_column("Property", style="cyan")
-    verification_table.add_column("Value", style="white")
+    verification_table = Table(
+        title="Official Domain Verification"
+    )
+
+    verification_table.add_column(
+        "Property",
+        style="cyan"
+    )
+
+    verification_table.add_column(
+        "Value"
+    )
 
     verification_table.add_row(
         "Status",
-        "✔ Verified" if verification["verified"] else "✖ Not Verified"
+        "Verified"
+        if verification["verified"]
+        else "Not Verified"
     )
 
     verification_table.add_row(
@@ -64,18 +157,26 @@ def print_analysis_report(
     )
 
     verification_table.add_row(
-        "Possible Typosquatting",
-        "Yes" if verification["possible_typosquatting"] else "No"
+        "Possible Bank Impersonation",
+        "Yes"
+        if verification["possible_typosquatting"]
+        else "No"
     )
 
     console.print(verification_table)
 
-    # -----------------------------
+    # -------------------------------------------------
     # KEYWORD ANALYSIS
-    # -----------------------------
-    keyword_table = Table(title="Detected Keywords")
+    # -------------------------------------------------
 
-    keyword_table.add_column("Keyword", style="yellow")
+    keyword_table = Table(
+        title="Detected Keywords"
+    )
+
+    keyword_table.add_column(
+        "Keyword",
+        style="yellow"
+    )
 
     if keywords:
 
@@ -85,64 +186,72 @@ def print_analysis_report(
 
     else:
 
-        keyword_table.add_row(
-            "No suspicious phishing keywords detected."
-        )
+        keyword_table.add_row("None")
 
     console.print(keyword_table)
 
-    # -----------------------------
+    # -------------------------------------------------
     # RISK ANALYSIS
-    # -----------------------------
-    analysis_table = Table(title="Risk Analysis")
+    # -------------------------------------------------
 
-    analysis_table.add_column("Check", style="cyan")
-    analysis_table.add_column("Result")
+    analysis = Table(
+        title="Risk Analysis"
+    )
 
-    analysis_table.add_row(
+    analysis.add_column(
+        "Security Check",
+        style="cyan"
+    )
+
+    analysis.add_column(
+        "Result"
+    )
+
+    analysis.add_row(
         "Official Domain",
-        "✔ Passed" if verification["verified"] else "✖ Failed"
+        "PASS"
+        if verification["verified"]
+        else "FAIL"
     )
 
-    analysis_table.add_row(
-        "Typosquatting",
-        "⚠ Detected" if verification["possible_typosquatting"] else "Not detected"
+    analysis.add_row(
+        "Possible Impersonation",
+        "Detected"
+        if verification["possible_typosquatting"]
+        else "Not Detected"
     )
 
-    analysis_table.add_row(
+    analysis.add_row(
         "Suspicious TLD",
-        "⚠ Yes" if suspicious_tld else "No"
+        "Yes"
+        if suspicious_tld
+        else "No"
     )
 
-    analysis_table.add_row(
-        "Phishing Keywords",
+    analysis.add_row(
+        "Detected Keywords",
         str(len(keywords))
     )
 
-    console.print(analysis_table)
+    console.print(analysis)
 
-    # -----------------------------
-    # RISK SCORE
-    # -----------------------------
-    if level == "LOW":
-        color = "green"
-    elif level == "MEDIUM":
-        color = "yellow"
-    else:
-        color = "red"
+    # -------------------------------------------------
+    # SECURITY SCORE
+    # -------------------------------------------------
 
     console.print(
         Panel.fit(
             f"[bold]{score}/100[/bold]\n"
             f"Risk Level: [{color}]{level}[/{color}]",
-            title="Security Assessment",
+            title="Security Score",
             border_style=color
         )
     )
 
-    # -----------------------------
+    # -------------------------------------------------
     # RECOMMENDATIONS
-    # -----------------------------
+    # -------------------------------------------------
+
     recommendations = Text()
 
     recommendations.append(
@@ -153,25 +262,25 @@ def print_analysis_report(
     if verification["verified"]:
 
         recommendations.append(
-            "✔ This website matches an official bank domain.\n"
+            "• This domain matches an official bank.\n"
         )
 
     else:
 
         recommendations.append(
-            "• Verify the official bank domain.\n"
+            "• Verify the domain before entering personal information.\n"
         )
 
-        if verification["possible_typosquatting"]:
+    if verification["possible_typosquatting"]:
 
-            recommendations.append(
-                "• This website may be impersonating an official bank.\n"
-            )
+        recommendations.append(
+            "• This website appears to imitate an official bank.\n"
+        )
 
     if suspicious_tld:
 
         recommendations.append(
-            "• This website uses a suspicious top-level domain.\n"
+            "• This website uses a suspicious domain extension.\n"
         )
 
     recommendations.append(
@@ -179,11 +288,11 @@ def print_analysis_report(
     )
 
     recommendations.append(
-        "• Check the SSL certificate before logging in.\n"
+        "• Check the SSL certificate.\n"
     )
 
     recommendations.append(
-        "• Contact your bank through official channels if unsure.\n"
+        "• Contact the bank if you are unsure.\n"
     )
 
     console.print(
