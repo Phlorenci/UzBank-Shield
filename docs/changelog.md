@@ -49,3 +49,25 @@
 - Added unit tests for similarity
 - Added unit tests for verifier
 - Added unit tests for TLD detection
+
+---
+
+## Version 0.6
+
+### Added
+
+- HTTPS protocol analysis
+- Website reachability checks
+- SSL certificate verification
+- SSL expiration analysis
+
+### Improved
+
+- Risk score calculation
+- Security report
+- User recommendations
+
+### Testing
+
+- Added HTTPS tests
+- Updated risk score tests
