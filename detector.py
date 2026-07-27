@@ -118,7 +118,8 @@ def main():
         suspicious_tld,
         connection,
         ssl_info,
-        domain_info
+        domain_info,
+        config["language"]
     )
 
 

@@ -5,6 +5,7 @@ from rich.panel import Panel
 from rich.text import Text
 
 from core.theme import console
+from core.messages import get_message
 
 
 def print_analysis_report(
@@ -16,7 +17,8 @@ def print_analysis_report(
     suspicious_tld,
     connection,
     ssl_info,
-    domain_info
+    domain_info,
+    language="en"
 ):
     # -------------------------------------------------
     # SUMMARY
@@ -191,7 +193,9 @@ def print_analysis_report(
 
     verification_table.add_row(
         "Status",
-        "Verified" if verification["verified"] else "Not Verified"
+        get_message("verified", language)
+        if verification["verified"]
+        else get_message("not_verified", language)
     )
 
     verification_table.add_row(
@@ -341,11 +345,11 @@ def print_analysis_report(
 
     if verification["verified"]:
         recommendations.append(
-            "• The domain matches an official bank.\n"
+            f"• {get_message('recommend_verified', language)}\n"
         )
     else:
         recommendations.append(
-            "• Verify the domain before entering personal information.\n"
+            f"• {get_message('recommend_unverified', language)}\n"
         )
 
     if verification["possible_typosquatting"]:
@@ -359,15 +363,15 @@ def print_analysis_report(
         )
 
     recommendations.append(
-        "• Never share OTP or SMS verification codes.\n"
+        f"• {get_message('never_share_otp', language)}\n"
     )
 
     recommendations.append(
-        "• Check the SSL certificate.\n"
+        f"• {get_message('check_ssl', language)}\n"
     )
 
     recommendations.append(
-        "• Contact the bank if you are unsure.\n"
+        f"• {get_message('contact_bank', language)}\n"
     )
 
     if not ssl_info["valid"]:
