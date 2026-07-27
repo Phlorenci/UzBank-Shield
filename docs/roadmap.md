@@ -41,7 +41,7 @@ Completed
 
 # Version 0.4 – Intelligent Bank Verification
 
-Planned
+Completed
 
 - Official Uzbek bank database
 - Official domain matching
@@ -51,7 +51,7 @@ Planned
 
 # Version 0.5 – Advanced domain analysis
 
-Planned
+Completed
 
 - Typosquatting detection
 - Homograph detection
@@ -61,7 +61,7 @@ Planned
 
 # Version 0.6 – Website verifcation
 
-Planned
+Completed
 
 - SSL certificate checks
 - WHOIS/domain age
@@ -71,13 +71,27 @@ Planned
 
 # Version 0.7 – User Experience
 
-Planned
+Completed
 
 - Uzbek language
 - Russian language
 - English language
 - Configuration file
-- Logging
+- Logging (scan history + debug/error logs)
+
+---
+
+---
+
+# Version 0.7.1 – Full UI Localization
+
+Planned
+
+- Translate table headers and field labels (Property, Value, Status, etc.)
+- Translate result values (PASS / FAIL / WARNING / Not Checked)
+- Translate remaining recommendation strings (e.g. impersonation warning)
+- Translate banner and CLI prompts (input_handler.py, banner.py)
+- Review full report output end-to-end in RU and UZ for phrasing/grammar
 
 ---
 
