@@ -1,4 +1,8 @@
-# UzBank Shield
+<div align="center">
+  <img src="assets/logo.svg" alt="UzBank Shield logo" width="160">
+
+  # UzBank Shield
+</div>
 
 UzBank Shield is an open-source Python project that analyzes URLs for common phishing indicators. The project is being developed to explore practical cybersecurity techniques while focusing on online banking safety in Uzbekistan.
 
