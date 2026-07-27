@@ -11,9 +11,12 @@ from core.tld import is_suspicious_tld
 from core.https_checker import check_https
 from core.ssl_checker import check_ssl_certificate
 from core.whois_checker import check_domain_info
+from core.config import load_config
 
 
 def main():
+
+    config = load_config()
 
     print_banner()
 
