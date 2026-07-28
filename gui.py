@@ -29,6 +29,7 @@ from PySide6.QtGui import QAction
 
 from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
 from gui_settings import SettingsDialog
+from core.messages import get_message
 
 
 LEVEL_COLORS = {
@@ -111,8 +112,10 @@ class MainWindow(QMainWindow):
 
         if dialog.exec():
             self.config = dialog.updated_config
-            self.status_label.setText("Settings saved.")
-
+            self.status_label.setText(
+                "Settings saved. Re-scan or reselect a history item to see language changes."
+            )
+            
     def _build_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -303,9 +306,15 @@ class MainWindow(QMainWindow):
 
         verification = result["verification"]
 
+        language = self.config.get("language", "en")
+
         self.verification_form.addRow(
             "Status:",
-            QLabel("Verified" if verification["verified"] else "Not Verified")
+            QLabel(
+                get_message("verified", language)
+                if verification["verified"]
+                else get_message("not_verified", language)
+            )
         )
         self.verification_form.addRow(
             "Bank:", QLabel(verification["bank"] or "-")
