@@ -87,3 +87,13 @@ def load_config():
         merged["language"] = "en"
 
     return merged
+
+def save_config(config):
+    #Persist a config dict to disk. Used by any caller (terminal or GUI) that wants to update settings outside of first-time setup
+
+    merged = dict(DEFAULT_CONFIG)
+    merged.update(config)
+
+    _write_config(merged)
+
+    return merged
