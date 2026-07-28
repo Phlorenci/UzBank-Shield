@@ -1,6 +1,7 @@
 # Welcome banner
 from rich.console import Console
 from rich.rule import Rule
+from core.__version__ import __version__
 
 console = Console()
 
