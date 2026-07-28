@@ -13,6 +13,9 @@ from PySide6.QtWidgets import (
     QLabel
 )
 
+from core.validator import validate_url
+from core.analyzer import URLAnalyzer
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -20,6 +23,8 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("UzBank Shield")
         self.resize(600, 400)
+
+        self.analyzer = URLAnalyzer()
 
         self._build_ui()
 
@@ -52,6 +57,7 @@ class MainWindow(QMainWindow):
         # ---------------------------------
 
         self.status_label = QLabel("Enter a URL and click Scan.")
+        self.status_label.setWordWrap(True)
 
         layout.addWidget(self.status_label)
         layout.addStretch()
@@ -63,7 +69,31 @@ class MainWindow(QMainWindow):
             self.status_label.setText("Please enter a URL first.")
             return
 
-        self.status_label.setText(f"Scanning: {url}...")
+        if not validate_url(url):
+            self.status_label.setText("Invalid URL format.")
+            return
+
+        self.status_label.setText("Scanning... please wait.")
+
+        # NOTE: this call blocks the UI thread while it runs (network
+        # I/O for HTTPS/SSL/WHOIS checks). The window will look frozen
+        # during the scan. This gets fixed in the threading stage —
+        # for now the goal is just proving the engine wiring works.
+        result = self.analyzer.analyze(url)
+
+        self._display_raw_result(result)
+
+    def _display_raw_result(self, result):
+        summary = (
+            f"Score: {result['score']}/100 ({result['level']})\n"
+            f"Verified: {result['verification']['verified']}\n"
+            f"Bank: {result['verification']['bank']}\n"
+            f"Suspicious TLD: {result['suspicious_tld']}\n"
+            f"HTTPS: {result['connection']['https']}\n"
+            f"Keywords: {', '.join(result['keywords']) or 'None'}"
+        )
+
+        self.status_label.setText(summary)
 
 
 def main():
