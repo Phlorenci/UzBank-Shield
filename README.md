@@ -95,6 +95,7 @@ python detector.py
 -  [Architecture](docs/architecture.md)
 -  [Changelog](docs/changelog.md)
 -  [Database](docs/database.md)
+-  [Contributing](docs/contributing.md)
 
 ---
 
