@@ -13,8 +13,26 @@ from core.ssl_checker import check_ssl_certificate
 from core.whois_checker import check_domain_info
 from core.config import load_config
 from core.logger import setup_logging, log_scan, log_error
+import argparse
+from core.__version__ import __version__
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        prog="detector.py",
+        description="UzBank Shield - Cybersecurity URL Analysis Toolkit"
+    )
+
+    parser.add_argument(
+        "-v", "--version",
+        action="version",
+        version=f"UzBank Shield {__version__}"
+    )
+
+    return parser.parse_args()
 
 def main():
+
+    parse_args()
 
     config = load_config()
     setup_logging(config["log_level"])
