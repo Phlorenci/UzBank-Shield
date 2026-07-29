@@ -1,39 +1,150 @@
 {
-    "version": "0.4.0",
+    "version": "0.8.0",
     "country": "Uzbekistan",
     "description": "Verified public domains of licensed commercial banks in Uzbekistan.",
     "last_updated": "2026-07",
+    "source": "Central Bank of the Republic of Uzbekistan (cbu.uz) - Head offices of commercial banks",
 
     "banks": [
         {
-            "name": "Kapitalbank",
-            "domains": [
-                "kapitalbank.uz"
-            ]
+            "name": "National Bank for Foreign Economic Activity",
+            "domains": ["nbu.uz"]
         },
         {
-            "name": "Hamkorbank",
-            "domains": [
-                "hamkorbank.uz"
-            ]
-        },
-        {
-            "name": "Ipoteka Bank",
-            "domains": [
-                "ipotekabank.uz"
-            ]
-        },
-        {
-            "name": "Agrobank",
-            "domains": [
-                "agrobank.uz"
-            ]
+            "name": "Joint-Stock Commercial People's Bank",
+            "domains": ["xb.uz"]
         },
         {
             "name": "Asakabank",
-            "domains": [
-                "asakabank.uz"
-            ]
+            "domains": ["asakabank.uz"]
+        },
+        {
+            "name": "Uzpromstroybank",
+            "domains": ["sqb.uz"]
+        },
+        {
+            "name": "Agrobank",
+            "domains": ["agrobank.uz"]
+        },
+        {
+            "name": "Business Development Bank",
+            "domains": ["brb.uz"]
+        },
+        {
+            "name": "Turon Bank",
+            "domains": ["turonbank.uz"]
+        },
+        {
+            "name": "Microcreditbank",
+            "domains": ["mkb.uz"]
+        },
+        {
+            "name": "Aloqabank",
+            "domains": ["aloqabank.uz"]
+        },
+        {
+            "name": "Poytaxt Bank",
+            "domains": ["poytaxtbank.uz"]
+        },
+        {
+            "name": "Invest Finance Bank",
+            "domains": ["infinbank.com"]
+        },
+        {
+            "name": "Madad Invest Bank",
+            "domains": ["madadinvestbank.uz"]
+        },
+        {
+            "name": "AVO Bank",
+            "domains": ["avobank.uz"]
+        },
+        {
+            "name": "TBC Bank Uzbekistan",
+            "domains": ["tbcbank.uz"]
+        },
+        {
+            "name": "Anor Bank",
+            "domains": ["anorbank.uz"]
+        },
+        {
+            "name": "Tayanch Mikromoliya Banki",
+            "domains": ["tayanchbank.uz"]
+        },
+        {
+            "name": "Asia Alliance Bank",
+            "domains": ["aab.uz"]
+        },
+        {
+            "name": "Ipak Yuli Bank",
+            "domains": ["ipakyulibank.com"]
+        },
+        {
+            "name": "Kapitalbank",
+            "domains": ["kapitalbank.uz"]
+        },
+        {
+            "name": "Trustbank",
+            "domains": ["trustbank.uz"]
+        },
+        {
+            "name": "Davr Bank",
+            "domains": ["davrbank.uz"]
+        },
+        {
+            "name": "Orient Finans",
+            "domains": ["ofb.uz"]
+        },
+        {
+            "name": "Universal Bank",
+            "domains": ["universalbank.uz"]
+        },
+        {
+            "name": "Octobank",
+            "domains": ["ravnaqbank.uz"]
+        },
+        {
+            "name": "Hamkorbank",
+            "domains": ["hamkorbank.uz"]
+        },
+        {
+            "name": "Garant Bank",
+            "domains": ["savdogarbank.uz"]
+        },
+        {
+            "name": "Bank Uzum",
+            "domains": ["uzumbank.uz"]
+        },
+        {
+            "name": "Open Bank",
+            "domains": ["openbank.uz"]
+        },
+        {
+            "name": "APEX Bank",
+            "domains": ["apexbank.uz"]
+        },
+        {
+            "name": "Hayot Bank",
+            "domains": ["hayotbank.uz"]
+        },
+        {
+            "name": "Tenge Bank",
+            "domains": ["tengebank.uz"]
+        },
+        {
+            "name": "KDB Bank Uzbekistan",
+            "domains": ["kdb.uz"]
+        },
+        {
+            "name": "Ziraat Bank Uzbekistan",
+            "domains": ["ziraatbank.uz"]
+        },
+        {
+            "name": "Bank Saderat Tashkent",
+            "domains": ["saderatbank.uz"]
+        },
+        {
+            "name": "Ipoteka Bank",
+            "domains": ["ipotekabank.uz"]
         }
     ]
 }
