@@ -2,6 +2,7 @@
 UzBank Shield - Desktop GUI entry point.
 """
 
+from pathlib import Path
 import sys
 
 from PySide6.QtWidgets import (
@@ -31,6 +32,7 @@ from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
 from gui_settings import SettingsDialog
 from core.messages import get_message
 from PySide6.QtGui import QColor
+from PySide6.QtGui import QIcon
 
 
 LEVEL_COLORS = {
@@ -38,6 +40,104 @@ LEVEL_COLORS = {
     "MEDIUM": "#f1c40f",
     "HIGH": "#e74c3c"
 }
+
+DARK_STYLESHEET = """
+QMainWindow, QDialog {
+    background-color: #0a1929;
+}
+
+QWidget {
+    background-color: #0a1929;
+    color: #e6f1f7;
+    font-size: 13px;
+}
+
+QLineEdit {
+    background-color: #0f2942;
+    border: 1px solid #22d3ee;
+    border-radius: 4px;
+    padding: 6px;
+    color: #e6f1f7;
+}
+
+QLineEdit:focus {
+    border: 1px solid #67e8f9;
+}
+
+QPushButton {
+    background-color: #22d3ee;
+    color: #0a1929;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #67e8f9;
+}
+
+QPushButton:disabled {
+    background-color: #1e3a52;
+    color: #5a7a8f;
+}
+
+QGroupBox {
+    border: 1px solid #1e3a52;
+    border-radius: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+    color: #22d3ee;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 4px;
+}
+
+QListWidget {
+    background-color: #0f2942;
+    border: 1px solid #1e3a52;
+    border-radius: 4px;
+}
+
+QListWidget::item {
+    padding: 6px;
+}
+
+QListWidget::item:selected {
+    background-color: #1e3a52;
+}
+
+QScrollArea {
+    border: none;
+}
+
+QToolBar {
+    background-color: #0f2942;
+    border: none;
+    spacing: 6px;
+    padding: 4px;
+}
+
+QComboBox {
+    background-color: #0f2942;
+    border: 1px solid #22d3ee;
+    border-radius: 4px;
+    padding: 4px;
+    color: #e6f1f7;
+}
+
+QSplitter::handle {
+    background-color: #1e3a52;
+}
+
+QDialogButtonBox QPushButton {
+    min-width: 70px;
+}
+"""
 
 
 class ScanWorker(QObject):
@@ -68,6 +168,9 @@ class MainWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("UzBank Shield")
+        icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.png"
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         self.resize(900, 600)
 
         self.thread = None
@@ -382,6 +485,11 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+    app.setStyleSheet(DARK_STYLESHEET)
+
+    icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.png"
+    if icon_path.exists():
+        app.setWindowIcon(QIcon(str(icon_path)))
 
     window = MainWindow()
     window.show()
