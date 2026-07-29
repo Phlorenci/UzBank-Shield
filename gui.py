@@ -30,6 +30,7 @@ from PySide6.QtGui import QAction
 from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
 from gui_settings import SettingsDialog
 from core.messages import get_message
+from PySide6.QtGui import QColor
 
 
 LEVEL_COLORS = {
@@ -283,7 +284,7 @@ class MainWindow(QMainWindow):
 
         color = LEVEL_COLORS.get(level)
         if color:
-            item.setForeground(Qt.GlobalColor.white)
+            item.setForeground(QColor(color))
 
         self.history_list.addItem(item)
         self.history_list.setCurrentItem(item)
