@@ -128,4 +128,7 @@
 - GUI language support currently covers verification status only, matching the same scope limitation tracked in the v0.7.1 Full UI Localization milestone
 - Scan history is session-only and not persisted to disk between app launches
 
+### Improved
+- Official bank database expanded from 5 to 35 banks, sourced directlyfrom the Central Bank of Uzbekistan's official registry
+
 ---
