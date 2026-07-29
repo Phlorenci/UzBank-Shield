@@ -20,7 +20,7 @@ UzBank Shield was started as a personal cybersecurity learning project with the 
 
 ## Current Features
 
-Current version: **v0.7.0**
+Current version: **v0.8.0**
 
 - URL parsing and validation
 - Phishing keyword detection
@@ -35,6 +35,9 @@ Current version: **v0.7.0**
 - Configuration system with first-run setup
 - Multilingual support (English, Russian, Uzbek)
 - Scan history and debug logging
+- Desktop GUI application (PySide6)
+- In-app scan history
+- In-app Settings (language, log level)
 
 ## Installation
 

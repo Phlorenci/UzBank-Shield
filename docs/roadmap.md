@@ -97,12 +97,12 @@ Planned
 
 # Version 0.8 – Desktop Application
 
-Planned
+Completed
 
 - PySide6 GUI
 - Scan history
-- Settings
-- Better reports
+- Settings (language, log-level)
+- Structured, sectioned results view
 
 ---
 
