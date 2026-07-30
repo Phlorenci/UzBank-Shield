@@ -55,3 +55,6 @@ Desktop.ini
 
 # Local configuration
 config.json
+
+# Visual Studio
+.vs/
