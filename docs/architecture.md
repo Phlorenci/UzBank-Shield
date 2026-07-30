@@ -2,101 +2,135 @@
 
 ## Overview
 
-UzBank Shield is a modular cybersecurity application designed to detect suspicious banking websites and reduce phishing risks for users in Uzbekistan.
+UzBank Shield is a modular cybersecurity application designed to detect suspicious banking and payment-processor websites, reducing phishing risk for users in Uzbekistan.
 
-The system analyzes a user-provided URL through several independent security modules. Each module performs a single responsibility, making the project easy to maintain, test, and expand.
+The system is built around a single shared analysis engine (`URLAnalyzer`) that runs a URL through several independent security checks. Two front-ends — a terminal application and a PySide6 desktop GUI — both call this same engine and differ only in how they present results. This separation means any improvement to the analysis logic automatically benefits both interfaces without duplicated code.
 
 ---
 
 # Architecture Diagram
 
-```
-                   User
-                     │
-                     ▼
-              Input Handler
-                     │
-                     ▼
-              URL Validator
-                     │
-                     ▼
-               URL Parser
-                     │
-         ┌───────────┼───────────┐
-         ▼           ▼           ▼
- Keyword Scanner  TLD Checker  Bank Verifier
-         │           │           │
-         └───────────┼───────────┘
-                     ▼
-          Similarity Detection
-                     │
-                     ▼
-            HTTPS Verification
-                     │
-                     ▼
-          SSL Certificate Check
-                     │
-                     ▼
-            WHOIS Information
-                     │
-                     ▼
-              Risk Calculator
-                     │
-                     ▼
-            Analysis Reporter
-                     │
-                     ▼
-                 User Output
-```
+User
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+    Terminal App              Desktop GUI
+    (detector.py)               (gui.py)
+          │                       │
+          └───────────┬───────────┘
+                       ▼
+                 URLAnalyzer
+                (core/analyzer.py)
+                       │
+                       ▼
+                  URL Parser
+                       │
+     ┌─────────────────┼─────────────────┐
+     ▼                 ▼                 ▼
+     Keyword Scanner TLD Checker Bank Verifier
+│ │ │
+│ │ Payment Processor
+│ │ Verifier
+│ │ │
+└─────────────────┼─────────────────┘
+▼
+Similarity Detection
+│
+▼
+HTTPS Verification
+│
+▼
+SSL Certificate Check
+│
+▼
+WHOIS Information
+│
+▼
+Risk Calculator
+│
+▼
+Structured Result Dict
+│
+┌────────────┴────────────┐
+▼ ▼
+Terminal Reporter GUI Results View
+(core/reporter.py) (gui.py)
 
 ---
 
 # Project Structure
 
-```
 UZBANK-SHIELD
 │
 ├── detector.py
+├── gui.py
+├── gui_settings.py
 │
 ├── core
-│   ├── banner.py
-│   ├── database.py
-│   ├── https_checker.py
-│   ├── input_handler.py
-│   ├── parser.py
-│   ├── reporter.py
-│   ├── risk.py
-│   ├── scanner.py
-│   ├── similarity.py
-│   ├── ssl_checker.py
-│   ├── theme.py
-│   ├── tld.py
-│   ├── validator.py
-│   ├── verifier.py
-│   └── whois_checker.py
+│ ├── analyzer.py
+│ ├── banner.py
+│ ├── config.py
+│ ├── database.py
+│ ├── https_checker.py
+│ ├── input_handler.py
+│ ├── logger.py
+│ ├── messages.py
+│ ├── parser.py
+│ ├── payment_verifier.py
+│ ├── reporter.py
+│ ├── risk.py
+│ ├── scanner.py
+│ ├── similarity.py
+│ ├── ssl_checker.py
+│ ├── theme.py
+│ ├── tld.py
+│ ├── validator.py
+│ ├── verifier.py
+│ ├── whois_checker.py
+│ └── version.py
 │
 ├── data
-│   └── official_banks.json
+│ ├── official_domains.json
+│ └── official_payment_processors.json
+│
+├── assets
+│ ├── logo.svg
+│ ├── logo.png
+│ └── logo.txt
+│
+├── logs
+│ ├── scan_history.log
+│ └── debug.log
 │
 ├── tests
-│   ├── test_https.py
-│   ├── test_parser.py
-│   ├── test_risk.py
-│   ├── test_similarity.py
-│   ├── test_tld.py
-│   ├── test_validator.py
-│   ├── test_verifier.py
-│   └── test_whois.py
+│ ├── test_analyzer.py
+│ ├── test_cli.py
+│ ├── test_config.py
+│ ├── test_https.py
+│ ├── test_logger.py
+│ ├── test_messages.py
+│ ├── test_parser.py
+│ ├── test_payment_verifier.py
+│ ├── test_risk.py
+│ ├── test_similarity.py
+│ ├── test_tld.py
+│ ├── test_validator.py
+│ ├── test_verifier.py
+│ └── test_whois.py
 │
 ├── docs
-│   ├── architecture.md
-│   ├── changelog.md
-│   ├── database.md
-│   └── roadmap.md
+│ ├── architecture.md
+│ ├── changelog.md
+│ ├── database.md
+│ └── roadmap.md
 │
+├── config.json.default
 ├── requirements.txt
+├── CONTRIBUTING.md
 └── README.md
-```
+
+
+---
 
 ---
 
@@ -104,20 +138,45 @@ UZBANK-SHIELD
 
 ## detector.py
 
-Main application entry point.
+Terminal application entry point.
 
 Responsibilities:
 
-- Starts the application
-- Coordinates all modules
-- Executes the security analysis pipeline
-- Displays the final report
+- Parses CLI arguments (`--version`, `--help`)
+- Loads configuration and initializes logging
+- Reads user input, calls `URLAnalyzer`
+- Passes the result to `core/reporter.py` for display
 
 ---
 
-## input_handler.py
+## gui.py / gui_settings.py
 
-Handles user interaction.
+Desktop application entry point (PySide6).
+
+Responsibilities:
+
+- Builds the main window, results view, and scan history list
+- Runs scans on a background thread (`QThread` + worker object) to keep the UI responsive during network I/O
+- Provides a Settings dialog for language and log level, including first-run setup on a fresh install
+- Applies the app's dark theme and window icon
+
+---
+
+## core/analyzer.py
+
+The shared analysis engine used by both front-ends.
+
+Responsibilities:
+
+- Runs the complete scan pipeline: parsing, keyword scanning, bank verification, payment processor verification, TLD check, HTTPS/SSL check, WHOIS lookup, and risk scoring
+- Returns a single structured result dict, with no printing or presentation logic of its own
+- Performs real network I/O (HTTPS, SSL, WHOIS), so callers on a UI thread should run it in the background
+
+---
+
+## core/input_handler.py
+
+Handles terminal user interaction.
 
 Responsibilities:
 
@@ -126,7 +185,7 @@ Responsibilities:
 
 ---
 
-## validator.py
+## core/validator.py
 
 Validates the entered URL.
 
@@ -137,21 +196,17 @@ Responsibilities:
 
 ---
 
-## parser.py
+## core/parser.py
 
 Extracts URL components.
 
 Responsibilities:
 
-- Protocol
-- Domain
-- Path
-- Query
-- Fragment
+- Protocol, domain, path, query, fragment
 
 ---
 
-## scanner.py
+## core/scanner.py
 
 Performs phishing keyword detection.
 
@@ -162,18 +217,18 @@ Responsibilities:
 
 ---
 
-## database.py
+## core/database.py
 
 Loads the official bank database.
 
 Responsibilities:
 
-- Read official bank domains
-- Provide data for verification
+- Read official bank domains (`data/official_domains.json`)
+- Provide data for bank verification
 
 ---
 
-## verifier.py
+## core/verifier.py
 
 Checks whether a website belongs to an official bank.
 
@@ -184,7 +239,18 @@ Responsibilities:
 
 ---
 
-## similarity.py
+## core/payment_verifier.py
+
+Checks whether a website belongs to an official payment processor. Mirrors `core/database.py` + `core/verifier.py`'s pattern, applied to a separate category.
+
+Responsibilities:
+
+- Load the payment processor database (`data/official_payment_processors.json`)
+- Exact domain verification and typosquat detection for payment processors (Payme, Click, Uzcard, Humo)
+
+---
+
+## core/similarity.py
 
 Detects possible domain impersonation.
 
@@ -196,7 +262,7 @@ Responsibilities:
 
 ---
 
-## tld.py
+## core/tld.py
 
 Checks suspicious domain extensions.
 
@@ -207,7 +273,7 @@ Responsibilities:
 
 ---
 
-## https_checker.py
+## core/https_checker.py
 
 Analyzes website connectivity.
 
@@ -219,7 +285,7 @@ Responsibilities:
 
 ---
 
-## ssl_checker.py
+## core/ssl_checker.py
 
 Verifies SSL certificate information.
 
@@ -232,7 +298,7 @@ Responsibilities:
 
 ---
 
-## whois_checker.py
+## core/whois_checker.py
 
 Retrieves WHOIS domain information.
 
@@ -245,28 +311,30 @@ Responsibilities:
 
 ---
 
-## risk.py
+## core/risk.py
 
 Calculates the final phishing risk.
 
-Current factors include:
+Factors include:
 
 - Keyword detection
-- Official verification
-- Domain impersonation
+- Official bank verification
+- Official payment processor verification
+- Domain impersonation (bank or payment processor)
 - Suspicious TLD
 - HTTPS usage
 - SSL certificate
 - Website availability
+- Domain age
 
 Produces:
 
 - Risk score (0–100)
-- Risk level
+- Risk level (LOW / MEDIUM / HIGH)
 
 ---
 
-## reporter.py
+## core/reporter.py
 
 Generates the terminal report.
 
@@ -277,39 +345,74 @@ Displays:
 - HTTPS analysis
 - SSL information
 - WHOIS information
-- Official verification
+- Official bank verification
+- Official payment processor verification
 - Keyword detection
 - Risk analysis
-- Recommendations
+- Recommendations (language-aware)
 
 ---
 
-## banner.py
+## core/config.py
 
-Displays the project banner and startup information.
+Manages persistent configuration.
+
+Responsibilities:
+
+- First-run interactive language setup (terminal) or dialog-based setup (GUI)
+- Load, validate, and save `config.json`
+- Fall back to safe defaults if the config file is missing or corrupted
 
 ---
 
-## theme.py
+## core/messages.py
 
-Provides Rich console styling.
+Provides multilingual message strings.
+
+Responsibilities:
+
+- Look up user-facing strings by key and language (English, Russian, Uzbek)
+- Fall back to English if a translation is missing
+
+---
+
+## core/logger.py
+
+Manages application logging.
+
+Responsibilities:
+
+- Scan history log (`logs/scan_history.log`) — one line per scan
+- Debug/error log (`logs/debug.log`) — exceptions and diagnostic detail
+
+---
+
+## core/banner.py
+
+Displays the terminal banner and startup information.
+
+---
+
+## core/theme.py
+
+Provides the shared Rich console instance used for terminal styling.
 
 ---
 
 # Testing
 
-The project uses **pytest** for automated testing.
+The project uses **pytest** for automated testing, with 66+ tests covering:
 
-Current test coverage includes:
-
-- URL validation
-- URL parsing
-- Risk calculation
-- HTTPS analysis
-- Similarity detection
-- TLD detection
-- Bank verification
-- WHOIS analysis
+- URL validation and parsing
+- Risk calculation (including payment processor scoring)
+- HTTPS, SSL, and WHOIS analysis
+- Similarity and typosquat detection
+- Bank and payment processor verification
+- Configuration loading (first-run, corrupted file, missing keys)
+- Multilingual message lookup
+- Logging (scan history and debug logs)
+- CLI flags (`--version`, `--help`)
+- Full `URLAnalyzer` pipeline (structural, integration, and mocked wiring tests)
 
 ---
 
@@ -317,9 +420,9 @@ Current test coverage includes:
 
 The project follows several software engineering principles:
 
-- Modular architecture
+- Modular architecture with a single shared analysis engine
 - Single Responsibility Principle (SRP)
-- Separation of concerns
+- Separation of logic from presentation (engine vs. terminal/GUI front-ends)
 - Reusable components
 - Test-driven development
 - Easy future extensibility
@@ -328,14 +431,14 @@ The project follows several software engineering principles:
 
 # Future Architecture
 
-Future versions may introduce additional modules, including:
+Planned extensions (see [Roadmap](roadmap.md) for full detail):
 
-- Browser Extension
-- Telegram Bot
-- Desktop Application
-- Payment Page Scanner
-- QR Code Verification
-- Anti-Scam Detection Engine
-- AI-based Phishing Detection
+- **v1.1 Payment Page Safety Checker** — extends beyond domain verification into page-content analysis
+- **v1.2 QR Code Security** — new GUI-side image/camera input path
+- **v1.3 SMS Scam Detection** — reusable detection logic shared with the future Telegram bot
+- **v1.4 AI Security Assistant** — LLM API integration
+- **v1.5 Community Threat Database** — first component requiring a backend server and database
+- **v1.6 Intelligent Domain Suggestions** — extends the existing similarity engine
+- **v1.7 Ecosystem** — Telegram bot (built directly on `URLAnalyzer`) and browser extension (requires a small backend API server, since browser JavaScript cannot call Python directly)
 
-These components will reuse the existing security analysis modules without major architectural changes.
+These components are designed to build on the existing `URLAnalyzer` engine rather than requiring architectural changes to the core.

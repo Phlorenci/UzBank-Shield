@@ -106,7 +106,7 @@ Completed
 
 # Version 0.9 – Payment Verification
 
-Planned
+Completed
 
 - Official payment processor database (Payme, Click, Uzcard)
 - Payment processor domain verification (mirrors bank verification)

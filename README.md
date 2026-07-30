@@ -20,24 +20,24 @@ UzBank Shield was started as a personal cybersecurity learning project with the 
 
 ## Current Features
 
-Current version: **v0.8.0**
+Current version: **v0.9.0**
 
-- URL parsing and validation
-- Phishing keyword detection
-- Risk score calculation
-- Official Uzbek bank domain verification
-- Security recommendations
-- Modular project architecture
-- Domain similarity analysis
-- Suspicious TLD detection
-- Typosquatting detection
-- Domain Information (WHOIS)
-- Configuration system with first-run setup
+**Core Detection**
+- URL parsing, validation, and phishing keyword detection
+- Official bank and payment processor domain verification (Payme, Click, Uzcard, Humo)
+- Typosquatting and suspicious TLD detection
+- SSL, HTTPS, and WHOIS domain analysis
+- Weighted risk scoring with actionable recommendations
+
+**Interfaces**
+- Terminal application with Rich-based reporting
+- Desktop GUI (PySide6) with threaded scanning, scan history, and settings
+
+**Platform**
 - Multilingual support (English, Russian, Uzbek)
+- Configurable settings with first-run setup
 - Scan history and debug logging
-- Desktop GUI application (PySide6)
-- In-app scan history
-- In-app Settings (language, log level)
+- Modular, tested architecture (66+ unit tests)
 
 ## Installation
 

@@ -132,3 +132,29 @@
 - Official bank database expanded from 5 to 35 banks, sourced directlyfrom the Central Bank of Uzbekistan's official registry
 
 ---
+
+Dark theme + app icon addition — this shipped as its own commit after the v0.8 changelog entry was written, so it's likely missing entirely. Worth a small "Improved" note under v0.8, or its own tiny v0.8.x mention.
+
+35-bank expansion — check whether this got folded into the v0.9 entry already or needs to sit separately under v0.8 (it happened between the two, timing-wise)
+
+---
+
+## Version 0.9
+
+### Added
+- Official payment processor database (data/official_payment_processors.json): 
+  Payme, Click, Uzcard, Humo
+- core/payment_verifier.py — payment processor domain verification, 
+  mirroring the existing bank verifier pattern
+- Payment processor verification integrated into risk scoring
+- New "Official Payment Processor Verification" section in terminal 
+  and GUI reports
+
+### Improved
+- Official bank database expanded from 5 to 35 banks, sourced directly 
+  from the Central Bank of Uzbekistan's official registry
+
+### Testing
+- Added tests/test_payment_verifier.py (6 tests)
+- Updated test_risk.py and test_analyzer.py for new signatures
+- 66 tests passing total
