@@ -81,8 +81,6 @@ Completed
 
 ---
 
----
-
 # Version 0.7.1 – Full UI Localization
 
 Planned
@@ -106,25 +104,110 @@ Completed
 
 ---
 
-# Version 0.9 - Ecosystem
+# Version 0.9 – Payment Verification
 
 Planned
 
-- Telegram bot
-- Browser extension
-- Performance improvements
+- Official payment processor database (Payme, Click, Uzcard)
+- Payment processor domain verification (mirrors bank verification)
+- Typosquat detection extended to payment processors
+- Updated reports (terminal + GUI) reflecting payment processor results
 
---- 
+---
 
-# Version 1.0 - Fist Stable Release
+# Version 1.0 – First Stable Release
 
 Planned
 
-- Complete analysis engine
+- Complete analysis engine (banks + payment processors)
 - Desktop application
 - Multilingual support
-- Official bank verification
+- Official bank & payment processor verification
 - SSL & WHOIS checks
 - Documentation
 
---- 
+---
+
+# Version 1.1 – Payment Page Safety Checker
+
+Planned
+
+- Analyze payment pages
+- Verify trusted payment providers
+- Warn before entering bank card information
+- Safety recommendations
+
+Note: builds on the payment processor domain verification introduced 
+in v0.9. Scope still to be defined — may extend to page-content 
+analysis beyond domain verification.
+
+---
+
+# Version 1.2 – QR Code Security
+
+Planned
+
+- Scan QR codes
+- Extract URLs
+- Analyze destination websites
+
+Note: primarily a GUI feature (camera/image input). Requires a new 
+dependency for QR decoding.
+
+---
+
+# Version 1.3 – SMS Scam Detection
+
+Planned
+
+- Analyze SMS messages
+- Detect phishing links
+- Scam keyword detection
+
+---
+
+# Version 1.4 – AI Security Assistant
+
+Planned
+
+- Explain why a website is suspicious
+- Answer user questions
+- Recommend actions
+
+---
+
+# Version 1.5 – Community Threat Database
+
+Planned
+
+- Report phishing websites
+- Community updates
+- Shared threat intelligence
+
+---
+
+# Version 1.6 – Intelligent Domain Suggestions
+
+Planned
+
+- Suggest the closest official bank
+- Better typosquatting detection
+- Explain similarities
+
+---
+
+# Version 1.7 – Ecosystem
+
+Planned
+
+- Telegram bot (built directly on the core analysis engine — Python, 
+  so it inherits every feature above with no extra translation work)
+- Browser extension (requires a small backend API server wrapping the 
+  analysis engine, since browser JavaScript can't call Python directly)
+- Performance improvements
+
+Note: deliberately built last, once the full feature set (v0.9-v1.6) 
+is stable — both front-ends then automatically inherit all detection 
+capabilities rather than needing to be rebuilt as features are added.
+
+---
