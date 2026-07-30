@@ -1,10 +1,11 @@
 def calculate_risk_score(
     keywords,
     verification,
+    payment_verification,
     suspicious_tld,
     connection,
     ssl_info,
-    domain_info
+    domain_info,
 ):
     score = 0
 
@@ -73,6 +74,20 @@ def calculate_risk_score(
 
         elif domain_info["age_days"] < 180:
             score += 10
+
+    # ---------------------------------
+    # Official payment processor verification
+    # ---------------------------------
+
+    if payment_verification["verified"]:
+        score -= 20
+
+    # ---------------------------------
+    # Payment processor impersonation
+    # ---------------------------------
+
+    if payment_verification["possible_typosquatting"]:
+        score += 35
         
     # ---------------------------------
     # Clamp score

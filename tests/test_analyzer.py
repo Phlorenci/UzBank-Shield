@@ -11,6 +11,7 @@ def test_analyze_returns_all_expected_keys():
         "components",
         "keywords",
         "verification",
+        "payment_verification",
         "suspicious_tld",
         "connection",
         "ssl_info",

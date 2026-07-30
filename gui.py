@@ -296,6 +296,11 @@ class MainWindow(QMainWindow):
         self.verification_box.setLayout(self.verification_form)
         self.results_layout.addWidget(self.verification_box)
 
+        self.payment_box = QGroupBox("Official Payment Processor Verification")
+        self.payment_form = QFormLayout()
+        self.payment_box.setLayout(self.payment_form)
+        self.results_layout.addWidget(self.payment_box)
+
         self.connection_box = QGroupBox("Connection & SSL")
         self.connection_form = QFormLayout()
         self.connection_box.setLayout(self.connection_form)
@@ -319,7 +324,7 @@ class MainWindow(QMainWindow):
         self._clear_result_sections()
 
     def _clear_result_sections(self):
-        for form in (self.verification_form, self.connection_form, self.whois_form):
+        for form in (self.verification_form, self.payment_form, self.connection_form, self.whois_form):
             while form.rowCount():
                 form.removeRow(0)
 
@@ -432,6 +437,26 @@ class MainWindow(QMainWindow):
         self.verification_form.addRow(
             "Possible Impersonation:",
             QLabel("Yes" if verification["possible_typosquatting"] else "No")
+        )
+
+        payment_verification = result["payment_verification"]
+
+        self.payment_form.addRow(
+            "Status:",
+            QLabel("Verified" if payment_verification["verified"] else "Not Verified")
+        )
+        self.payment_form.addRow(
+            "Processor:", QLabel(payment_verification["processor"] or "-")
+        )
+        self.payment_form.addRow(
+            "Closest Domain:", QLabel(payment_verification["closest_domain"] or "-")
+        )
+        self.payment_form.addRow(
+            "Similarity:", QLabel(f"{payment_verification['similarity']}%")
+        )
+        self.payment_form.addRow(
+            "Possible Impersonation:",
+            QLabel("Yes" if payment_verification["possible_typosquatting"] else "No")
         )
 
         connection = result["connection"]

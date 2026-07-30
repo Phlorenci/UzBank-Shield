@@ -14,6 +14,7 @@ def print_analysis_report(
     score,
     level,
     verification,
+    payment_verification,
     suspicious_tld,
     connection,
     ssl_info,
@@ -224,6 +225,49 @@ def print_analysis_report(
     )
 
     console.print(verification_table)
+
+    # -------------------------------------------------
+    # OFFICIAL PAYMENT PROCESSOR VERIFICATION
+    # -------------------------------------------------
+
+    payment_table = Table(
+        title="Official Payment Processor Verification"
+    )
+
+    payment_table.add_column("Property", style="cyan")
+    payment_table.add_column("Value")
+
+    payment_table.add_row(
+        "Status",
+        "Verified" if payment_verification["verified"] else "Not Verified"
+    )
+
+    payment_table.add_row(
+        "Processor",
+        payment_verification["processor"] or "-"
+    )
+
+    payment_table.add_row(
+        "Official Domain",
+        payment_verification["official_domain"] or "-"
+    )
+
+    payment_table.add_row(
+        "Closest Domain",
+        payment_verification["closest_domain"] or "-"
+    )
+
+    payment_table.add_row(
+        "Similarity",
+        f'{payment_verification["similarity"]}%'
+    )
+
+    payment_table.add_row(
+        "Possible Processor Impersonation",
+        "Yes" if payment_verification["possible_typosquatting"] else "No"
+    )
+
+    console.print(payment_table)
 
     # -------------------------------------------------
     # DETECTED KEYWORDS

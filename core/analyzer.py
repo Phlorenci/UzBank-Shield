@@ -7,6 +7,7 @@ from core.https_checker import check_https
 from core.ssl_checker import check_ssl_certificate
 from core.whois_checker import check_domain_info
 from core.risk import calculate_risk_score
+from core.payment_verifier import load_payment_processors, verify_payment_processor
 
 
 class URLAnalyzer:
@@ -33,6 +34,17 @@ class URLAnalyzer:
         verification = verify_domain(
             components["original_url"],
             database
+        )
+
+        # ---------------------------------
+        # Official payment processor verification
+        # ---------------------------------
+
+        payment_database = load_payment_processors()
+
+        payment_verification = verify_payment_processor(
+            components["original_url"],
+            payment_database
         )
 
         # ---------------------------------
@@ -84,10 +96,11 @@ class URLAnalyzer:
         score, level = calculate_risk_score(
             keywords,
             verification,
+            payment_verification,
             suspicious_tld,
             connection,
             ssl_info,
-            domain_info
+            domain_info,
         )
 
         # ---------------------------------
@@ -98,10 +111,11 @@ class URLAnalyzer:
             "components": components,
             "keywords": keywords,
             "verification": verification,
+            "payment_verification": payment_verification,
             "suspicious_tld": suspicious_tld,
             "connection": connection,
             "ssl_info": ssl_info,
             "domain_info": domain_info,
             "score": score,
-            "level": level
+            "level": level,
         }

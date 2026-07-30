@@ -38,6 +38,22 @@ SAFE_DOMAIN_INFO = {
     "error": None
 }
 
+UNVERIFIED_PAYMENT = {
+    "verified": False,
+    "possible_typosquatting": False
+}
+
+VERIFIED_PAYMENT = {
+    "verified": True,
+    "possible_typosquatting": False
+}
+
+TYPOSQUAT_PAYMENT = {
+    "verified": False,
+    "possible_typosquatting": True
+}
+
+
 def test_verified_safe_domain():
 
     verification = {
@@ -48,6 +64,7 @@ def test_verified_safe_domain():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -68,6 +85,7 @@ def test_keyword_risk():
     score, level = calculate_risk_score(
         ["login", "verify"],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -88,6 +106,7 @@ def test_typosquatting():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -108,6 +127,7 @@ def test_suspicious_tld():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         True,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -128,6 +148,7 @@ def test_http_connection():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         HTTP_CONNECTION,
         SAFE_SSL,
@@ -148,21 +169,28 @@ def test_unreachable_connection():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         UNREACHABLE_CONNECTION,
         SAFE_SSL,
         SAFE_DOMAIN_INFO
     )
 
-    def test_invalid_ssl():
-        verification = {
-            "verified": False,
-            "possible_typosquatting": False
+    assert score == 10
+    assert level == "LOW"
+
+
+def test_invalid_ssl():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
     }
 
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         SAFE_CONNECTION,
         INVALID_SSL,
@@ -183,6 +211,7 @@ def test_expiring_ssl():
     score, level = calculate_risk_score(
         [],
         verification,
+        UNVERIFIED_PAYMENT,
         False,
         SAFE_CONNECTION,
         EXPIRING_SSL,
@@ -192,5 +221,44 @@ def test_expiring_ssl():
     assert score == 10
     assert level == "LOW"
 
-    assert score == 10
+
+def test_verified_payment_processor():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        VERIFIED_PAYMENT,
+        False,
+        SAFE_CONNECTION,
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
+    )
+
+    assert score == 0
     assert level == "LOW"
+
+
+def test_payment_processor_typosquatting():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        TYPOSQUAT_PAYMENT,
+        False,
+        SAFE_CONNECTION,
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
+    )
+
+    assert score == 35
+    assert level == "MEDIUM"
