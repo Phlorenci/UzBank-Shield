@@ -1,0 +1,34 @@
+{
+    "version": "0.9.0",
+    "country": "Uzbekistan",
+    "description": "Verified public domains of licensed payment processors and payment systems operating in Uzbekistan.",
+    "last_updated": "2026-07",
+    "source": "Official payment processor websites",
+
+    "processors": [
+        {
+            "name": "Payme",
+            "domains": [
+                "payme.uz"
+            ]
+        },
+        {
+            "name": "Click",
+            "domains": [
+                "click.uz"
+            ]
+        },
+        {
+            "name": "Uzcard",
+            "domains": [
+                "uzcard.uz"
+            ]
+        },
+        {
+            "name": "Humo",
+            "domains": [
+                "humocard.uz"
+            ]
+        }
+    ]
+}
