@@ -1,15 +1,18 @@
 # Welcome banner
 from rich.console import Console
 from rich.rule import Rule
+
 from core.__version__ import __version__
+from core.messages import get_message
 
 console = Console()
 
 
-def print_banner():
+def print_banner(language="en"):
     console.print()
     console.print(Rule("[bold cyan]UzBank Shield[/bold cyan]"))
-    console.print("Cybersecurity URL Analysis Toolkit")
-    console.print("Version 0.9.0")
+    console.print(get_message("banner_subtitle", language))
+    console.print(f"Version {__version__}")
     console.print(Rule(style="cyan"))
-    console.print("[green]Status:[/green] Ready\n")
+    console.print(f"[green]Status:[/green] {get_message('banner_status_ready', language)}\n")
+    

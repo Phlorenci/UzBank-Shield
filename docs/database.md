@@ -17,7 +17,7 @@ Both databases are consulted during every scan. A URL is checked against each in
 
 ```json
 {
-    "version": "0.9.0",
+    "version": "1.0.0",
     "country": "Uzbekistan",
     "description": "Verified public domains of licensed commercial banks in Uzbekistan.",
     "last_updated": "2026-07",
@@ -51,7 +51,7 @@ The database currently tracks **35 licensed commercial banks**, sourced directly
 
 ```json
 {
-    "version": "0.9.0",
+    "version": "1.0.0",
     "country": "Uzbekistan",
     "description": "Verified public domains of licensed payment processors and payment systems operating in Uzbekistan.",
     "last_updated": "2026-07",

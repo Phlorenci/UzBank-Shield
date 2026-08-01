@@ -1,15 +1,18 @@
 # Gets User Input
 
-def get_user_input():
+from core.messages import get_message
+
+
+def get_user_input(language="en"):
     """
     Ask the user for a URL.
     """
 
     while True:
-        url = input("\nEnter a website URL: ").strip()
+        url = input(f"\n{get_message('prompt_enter_url', language)}").strip()
 
         if not url:
-            print("URL cannot be empty.")
+            print(get_message("empty_url", language))
             continue
 
         return url

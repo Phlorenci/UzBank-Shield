@@ -20,7 +20,7 @@ UzBank Shield was started as a personal cybersecurity learning project with the 
 
 ## Current Features
 
-Current version: **v0.9.0**
+Current version: **v1.0.0**
 
 **Core Detection**
 - URL parsing, validation, and phishing keyword detection

@@ -3,6 +3,7 @@ import argparse
 from core.__version__ import __version__
 from core.banner import print_banner
 from core.input_handler import get_user_input
+from core.messages import get_message
 from core.validator import validate_url
 from core.reporter import print_analysis_report
 from core.analyzer import URLAnalyzer
@@ -32,13 +33,13 @@ def main():
     config = load_config()
     setup_logging(config["log_level"])
 
-    print_banner()
+    print_banner(config["language"])
 
-    url = get_user_input()
+    url = get_user_input(config["language"])    
 
     if not validate_url(url):
 
-        print("\nInvalid URL format.")
+        print(f"\n{get_message('invalid_url', config['language'])}")  # This will print the invalid URL message in the selected language
         return
 
     analyzer = URLAnalyzer()
