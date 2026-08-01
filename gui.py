@@ -33,6 +33,7 @@ from gui_settings import SettingsDialog
 from core.messages import get_message
 from PySide6.QtGui import QColor
 from PySide6.QtGui import QIcon
+from gui_qr_scanner import QRScannerDialog
 
 
 LEVEL_COLORS = {
@@ -240,8 +241,12 @@ class MainWindow(QMainWindow):
         self.scan_button = QPushButton("Scan")
         self.scan_button.clicked.connect(self._on_scan_clicked)
 
+        self.qr_button = QPushButton("Scan QR Code")
+        self.qr_button.clicked.connect(self._on_qr_button_clicked)
+
         input_row.addWidget(self.url_input)
         input_row.addWidget(self.scan_button)
+        input_row.addWidget(self.qr_button)
 
         outer_layout.addLayout(input_row)
 
@@ -280,6 +285,13 @@ class MainWindow(QMainWindow):
         outer_layout.addWidget(splitter)
 
         self._build_result_sections()
+
+    def _on_qr_button_clicked(self):
+        dialog = QRScannerDialog(self)
+
+        if dialog.exec() and dialog.detected_url:
+            self.url_input.setText(dialog.detected_url)
+            self._on_scan_clicked()
 
     def _build_result_sections(self):
         self.score_label = QLabel("")
