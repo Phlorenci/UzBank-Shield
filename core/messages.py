@@ -73,6 +73,11 @@ MESSAGES = {
         "value_not_detected": "Not Detected",
         "value_detected": "Detected",
         "panel_security_score": "Security Score",
+        "table_page_analysis": "Payment Page Analysis",
+        "label_page_analyzed": "Page Analyzed",
+        "label_requests_card_info": "Requests Card Information",
+        "label_card_warning": "Card Info on Unverified Site",
+        "recommend_card_warning": "This page appears to request payment card details but is not on a verified domain. Do not enter your card information.",
 
         # Result values
         "value_pass": "PASS",
@@ -164,6 +169,11 @@ MESSAGES = {
         "value_not_detected": "Не обнаружено",
         "value_detected": "Обнаружено",
         "panel_security_score": "Оценка безопасности",
+        "table_page_analysis": "Анализ платёжной страницы",
+        "label_page_analyzed": "Страница проанализирована",
+        "label_requests_card_info": "Запрашивает данные карты",
+        "label_card_warning": "Данные карты на непроверенном сайте",
+        "recommend_card_warning": "Эта страница запрашивает данные платёжной карты, но домен не подтверждён. Не вводите данные своей карты.",
 
         # Result values
         "value_pass": "ПРОЙДЕНО",
@@ -255,6 +265,11 @@ MESSAGES = {
         "value_not_detected": "Aniqlanmadi",
         "value_detected": "Aniqlandi",
         "panel_security_score": "Xavfsizlik bahosi",
+        "table_page_analysis": "To'lov sahifasi tahlili",
+        "label_page_analyzed": "Sahifa tahlil qilindi",
+        "label_requests_card_info": "Karta ma'lumotlarini so'raydi",
+        "label_card_warning": "Tasdiqlanmagan saytda karta ma'lumotlari",
+        "recommend_card_warning": "Ushbu sahifa to'lov kartasi ma'lumotlarini so'rayotganga o'xshaydi, ammo domen tasdiqlanmagan. Karta ma'lumotlaringizni kiritmang.",
 
         # Result values
         "value_pass": "O'TDI",

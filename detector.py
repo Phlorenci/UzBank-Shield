@@ -65,6 +65,7 @@ def main():
         result["level"],
         result["verification"],
         result["payment_verification"],
+        result["page_analysis"],
         result["suspicious_tld"],
         result["connection"],
         result["ssl_info"],

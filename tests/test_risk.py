@@ -53,6 +53,20 @@ TYPOSQUAT_PAYMENT = {
     "possible_typosquatting": True
 }
 
+SAFE_PAGE_ANALYSIS = {
+    "analyzed": True,
+    "requests_card_info": False,
+    "matched_fields": [],
+    "error": None
+}
+
+CARD_INFO_PAGE_ANALYSIS = {
+    "analyzed": True,
+    "requests_card_info": True,
+    "matched_fields": ["card_number", "cvv"],
+    "error": None
+}
+
 
 def test_verified_safe_domain():
 
@@ -65,6 +79,7 @@ def test_verified_safe_domain():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -86,6 +101,7 @@ def test_keyword_risk():
         ["login", "verify"],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -107,6 +123,7 @@ def test_typosquatting():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -128,6 +145,7 @@ def test_suspicious_tld():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         True,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -149,6 +167,7 @@ def test_http_connection():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         HTTP_CONNECTION,
         SAFE_SSL,
@@ -170,6 +189,7 @@ def test_unreachable_connection():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         UNREACHABLE_CONNECTION,
         SAFE_SSL,
@@ -191,6 +211,7 @@ def test_invalid_ssl():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         INVALID_SSL,
@@ -212,6 +233,7 @@ def test_expiring_ssl():
         [],
         verification,
         UNVERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         EXPIRING_SSL,
@@ -233,6 +255,7 @@ def test_verified_payment_processor():
         [],
         verification,
         VERIFIED_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -254,6 +277,7 @@ def test_payment_processor_typosquatting():
         [],
         verification,
         TYPOSQUAT_PAYMENT,
+        SAFE_PAGE_ANALYSIS,
         False,
         SAFE_CONNECTION,
         SAFE_SSL,
@@ -262,3 +286,48 @@ def test_payment_processor_typosquatting():
 
     assert score == 35
     assert level == "MEDIUM"
+
+
+def test_card_info_requested_on_unverified_domain():
+
+    verification = {
+        "verified": False,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        UNVERIFIED_PAYMENT,
+        CARD_INFO_PAGE_ANALYSIS,
+        False,
+        SAFE_CONNECTION,
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
+    )
+
+    assert score == 40
+    assert level == "MEDIUM"
+
+
+def test_card_info_requested_on_verified_domain_is_safe():
+
+    verification = {
+        "verified": True,
+        "possible_typosquatting": False
+    }
+
+    score, level = calculate_risk_score(
+        [],
+        verification,
+        UNVERIFIED_PAYMENT,
+        CARD_INFO_PAGE_ANALYSIS,
+        False,
+        SAFE_CONNECTION,
+        SAFE_SSL,
+        SAFE_DOMAIN_INFO
+    )
+
+    # Verified bank asking for card info is expected and safe
+    assert score == 0
+    assert level == "LOW"

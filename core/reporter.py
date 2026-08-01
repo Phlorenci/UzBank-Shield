@@ -15,6 +15,7 @@ def print_analysis_report(
     level,
     verification,
     payment_verification,
+    page_analysis,
     suspicious_tld,
     connection,
     ssl_info,
@@ -271,6 +272,27 @@ def print_analysis_report(
     console.print(payment_table)
 
     # -------------------------------------------------
+    # PAYMENT PAGE ANALYSIS
+    # -------------------------------------------------
+
+    page_table = Table(title=_("table_page_analysis"))
+
+    page_table.add_column(_("label_property"), style="cyan")
+    page_table.add_column(_("label_value"))
+
+    page_table.add_row(
+        _("label_page_analyzed"),
+        _("value_yes") if page_analysis["analyzed"] else _("value_no")
+    )
+
+    page_table.add_row(
+        _("label_requests_card_info"),
+        _("value_yes") if page_analysis["requests_card_info"] else _("value_no")
+    )
+
+    console.print(page_table)
+
+    # -------------------------------------------------
     # DETECTED KEYWORDS
     # -------------------------------------------------
 
@@ -347,6 +369,14 @@ def print_analysis_report(
         else _("value_not_detected")
     )
 
+    is_verified_anywhere = verification["verified"] or payment_verification["verified"]
+    card_warning_triggered = page_analysis["requests_card_info"] and not is_verified_anywhere
+
+    analysis.add_row(
+        _("label_card_warning"),
+        _("value_yes") if card_warning_triggered else _("value_no")
+    )
+
     analysis.add_row(
         _("label_suspicious_tld"),
         _("value_yes") if suspicious_tld else _("value_no")
@@ -405,6 +435,11 @@ def print_analysis_report(
     if verification["possible_typosquatting"] or payment_verification["possible_typosquatting"]:
         recommendations.append(
             f"• {_('recommend_impersonation')}\n"
+        )
+
+    if card_warning_triggered:
+        recommendations.append(
+            f"• {_('recommend_card_warning')}\n"
         )
 
     if suspicious_tld:

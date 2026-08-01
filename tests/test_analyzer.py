@@ -13,6 +13,7 @@ def test_analyze_returns_all_expected_keys():
         "verification",
         "payment_verification",
         "suspicious_tld",
+        "page_analysis",
         "connection",
         "ssl_info",
         "domain_info",

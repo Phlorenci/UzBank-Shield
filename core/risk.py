@@ -2,6 +2,7 @@ def calculate_risk_score(
     keywords,
     verification,
     payment_verification,
+    page_analysis,  
     suspicious_tld,
     connection,
     ssl_info,
@@ -88,6 +89,15 @@ def calculate_risk_score(
 
     if payment_verification["possible_typosquatting"]:
         score += 35
+
+    # ---------------------------------
+    # Payment page requesting card info on unverified domain
+    # ---------------------------------
+
+    is_verified_anywhere = verification["verified"] or payment_verification["verified"]
+
+    if page_analysis["requests_card_info"] and not is_verified_anywhere:
+        score += 40
         
     # ---------------------------------
     # Clamp score

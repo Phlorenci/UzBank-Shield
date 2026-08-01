@@ -301,6 +301,11 @@ class MainWindow(QMainWindow):
         self.payment_box.setLayout(self.payment_form)
         self.results_layout.addWidget(self.payment_box)
 
+        self.page_box = QGroupBox("Payment Page Analysis")
+        self.page_form = QFormLayout()
+        self.page_box.setLayout(self.page_form)
+        self.results_layout.addWidget(self.page_box)
+
         self.connection_box = QGroupBox("Connection & SSL")
         self.connection_form = QFormLayout()
         self.connection_box.setLayout(self.connection_form)
@@ -324,7 +329,7 @@ class MainWindow(QMainWindow):
         self._clear_result_sections()
 
     def _clear_result_sections(self):
-        for form in (self.verification_form, self.payment_form, self.connection_form, self.whois_form):
+        for form in (self.verification_form, self.payment_form, self.page_form, self.connection_form, self.whois_form):
             while form.rowCount():
                 form.removeRow(0)
 
@@ -457,6 +462,16 @@ class MainWindow(QMainWindow):
         self.payment_form.addRow(
             "Possible Impersonation:",
             QLabel("Yes" if payment_verification["possible_typosquatting"] else "No")
+        )
+
+        page_analysis = result["page_analysis"]
+
+        self.page_form.addRow(
+            "Page Analyzed:", QLabel("Yes" if page_analysis["analyzed"] else "No")
+        )
+        self.page_form.addRow(
+            "Requests Card Info:",
+            QLabel("Yes" if page_analysis["requests_card_info"] else "No")
         )
 
         connection = result["connection"]
