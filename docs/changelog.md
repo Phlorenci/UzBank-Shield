@@ -158,3 +158,27 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
 - Added tests/test_payment_verifier.py (6 tests)
 - Updated test_risk.py and test_analyzer.py for new signatures
 - 66 tests passing total
+
+## Version 1.1
+
+### Added
+- Payment page content analysis (core/page_analyzer.py): fetches a 
+  page's HTML and detects fields commonly used to collect card 
+  information (card number, CVV, expiry, cardholder name)
+- New risk factor: pages requesting card details on an unverified 
+  domain (not a known bank or payment processor) add significant 
+  risk weight to the score
+- New "Payment Page Analysis" section in terminal and GUI reports
+- Translated warning message shown when card info is requested on an 
+  unverified domain (English, Russian, Uzbek)
+
+### Testing
+- Added tests/test_page_analyzer.py (4 tests): card field detection, 
+  no false positives on unrelated forms, safe failure on network 
+  errors, safe failure on bad HTTP status
+- Added 2 new risk-scoring tests confirming the card warning only 
+  triggers on unverified domains
+- 72 tests passing total
+
+### Dependencies
+- Added beautifulsoup4 for HTML parsing

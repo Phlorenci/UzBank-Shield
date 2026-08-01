@@ -117,7 +117,7 @@ Completed
 
 # Version 1.0 – First Stable Release
 
-Planned
+Completed
 
 - Complete analysis engine (banks + payment processors)
 - Desktop application
@@ -130,7 +130,7 @@ Planned
 
 # Version 1.1 – Payment Page Safety Checker
 
-Planned
+Completed
 
 - Analyze payment pages
 - Verify trusted payment providers

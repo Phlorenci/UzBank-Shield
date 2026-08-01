@@ -25,14 +25,15 @@ User
                        ▼
                   URL Parser
                        │
-     ┌─────────────────┼─────────────────┐
-     ▼                 ▼                 ▼
-     Keyword Scanner TLD Checker Bank Verifier
-│ │ │
-│ │ Payment Processor
-│ │ Verifier
-│ │ │
-└─────────────────┼─────────────────┘
+     ▼           ▼           ▼
+ Keyword Scanner  TLD Checker  Bank Verifier
+         │           │           │
+         │           │        Payment Processor
+         │           │            Verifier
+         │           │              │
+         │           │       Payment Page Analyzer
+         │           │              │
+         └───────────┼──────────────┘
 ▼
 Similarity Detection
 │
@@ -76,6 +77,7 @@ UZBANK-SHIELD
 │ ├── logger.py
 │ ├── messages.py
 │ ├── parser.py
+│ ├── page_analyzer.py
 │ ├── payment_verifier.py
 │ ├── reporter.py
 │ ├── risk.py
@@ -249,6 +251,17 @@ Responsibilities:
 - Exact domain verification and typosquat detection for payment processors (Payme, Click, Uzcard, Humo)
 
 ---
+
+## core/page_analyzer.py
+
+Analyzes a payment page's HTML content, independent of domain verification.
+
+Responsibilities:
+
+- Fetch the page and parse its HTML
+- Detect form fields commonly used to collect card information
+- Fail safe on network errors or non-200 responses, since this is a 
+  bonus signal rather than a required check
 
 ## core/similarity.py
 
