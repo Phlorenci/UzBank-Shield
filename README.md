@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/logo.png" alt="UzBank Shield logo" width="160">
+  <img src="assets/logo.svg" alt="UzBank Shield logo" width="160">
 
   # UzBank Shield
 
