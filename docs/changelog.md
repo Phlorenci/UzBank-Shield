@@ -159,6 +159,8 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
 - Updated test_risk.py and test_analyzer.py for new signatures
 - 66 tests passing total
 
+---
+
 ## Version 1.1
 
 ### Added
@@ -182,3 +184,40 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
 
 ### Dependencies
 - Added beautifulsoup4 for HTML parsing
+
+---
+
+## Version 1.2
+
+### Added
+- Live QR code and barcode scanning (desktop GUI): webcam capture, 
+  automatic decoding, and content classification
+- QR/barcode content classification: distinguishes website URLs, 
+  WiFi credentials, contact cards, email/phone links, cryptocurrency 
+  addresses, EMV payment QR codes (Toss, Alipay, WeChat Pay, and 
+  similar), retail barcodes, and generic numeric reference codes
+- Safety assessment for each QR/barcode type (e.g. open WiFi warning, 
+  payment QR merchant verification prompt, crypto address warning)
+- Website URL QR codes automatically route through the full 
+  URLAnalyzer scan pipeline; all other types show an in-dialog 
+  classification and safety summary
+
+### Fixed
+- GUI language switching previously only affected the terminal app — 
+  the desktop GUI stayed in English regardless of the configured 
+  language. The entire GUI (main window, results panel, Settings 
+  dialog, QR scanner dialog, risk level labels, and all field values) 
+  now correctly re-translates live when the language is changed in 
+  Settings
+- Fixed a QFormLayout bug where empty-string row labels prevented 
+  Settings dialog fields from being retranslatable
+- Removed noisy zbar/PDF417 decoder warnings by restricting barcode 
+  scanning to relevant symbologies (QR, EAN, UPC, Code128, Code39)
+
+### Testing
+- Added tests/test_qr_scanner.py, test_qr_classifier.py, test_qr_safety.py
+- 80+ tests passing total
+
+### Dependencies
+- Added opencv-python, pyzbar (QR/barcode scanning)
+- Added qrcode, Pillow (test-time QR image generation)

@@ -83,7 +83,7 @@ Completed
 
 # Version 0.7.1 – Full UI Localization
 
-Planned
+Completed
 
 - Translate table headers and field labels (Property, Value, Status, etc.)
 - Translate result values (PASS / FAIL / WARNING / Not Checked)
@@ -145,7 +145,7 @@ analysis beyond domain verification.
 
 # Version 1.2 – QR Code Security
 
-Planned
+Completed
 
 - Scan QR codes
 - Extract URLs

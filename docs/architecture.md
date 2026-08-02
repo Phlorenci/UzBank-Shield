@@ -66,6 +66,7 @@ UZBANK-SHIELD
 ├── detector.py
 ├── gui.py
 ├── gui_settings.py
+├── gui_qr_scanner.py
 │
 ├── core
 │ ├── analyzer.py
@@ -79,6 +80,10 @@ UZBANK-SHIELD
 │ ├── parser.py
 │ ├── page_analyzer.py
 │ ├── payment_verifier.py
+│ ├── qr_scanner.py
+│ ├── qr_classifier.py
+│ ├── qr_safety.py
+│ ├── qr_worker.py
 │ ├── reporter.py
 │ ├── risk.py
 │ ├── scanner.py
