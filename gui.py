@@ -2,8 +2,8 @@
 UzBank Shield - Desktop GUI entry point.
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -19,20 +19,17 @@ from PySide6.QtWidgets import (
     QScrollArea,
     QSplitter,
     QListWidget,
-    QListWidgetItem
+    QListWidgetItem,
+    QToolBar
 )
 from PySide6.QtCore import Qt, QThread, QObject, Signal
+from PySide6.QtGui import QAction, QColor, QIcon
 
 from core.validator import validate_url
 from core.analyzer import URLAnalyzer
-from PySide6.QtWidgets import QToolBar
-from PySide6.QtGui import QAction
-
 from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
-from gui_settings import SettingsDialog
 from core.messages import get_message
-from PySide6.QtGui import QColor
-from PySide6.QtGui import QIcon
+from gui_settings import SettingsDialog
 from gui_qr_scanner import QRScannerDialog
 
 
@@ -144,7 +141,7 @@ QDialogButtonBox QPushButton {
 class ScanWorker(QObject):
     """
     Runs URLAnalyzer.analyze() on a background thread so the GUI
-    stays responsive during network I/O (HTTPS, SSL, WHOIS checks).
+    stays responsive during network I/O.
     """
 
     finished = Signal(dict)
@@ -168,59 +165,65 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("UzBank Shield")
         icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.png"
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
+
         self.resize(900, 600)
 
         self.thread = None
         self.worker = None
         self.scan_history = []
+        self.last_result = None
 
-        # Session-only scan history: list index -> full result dict.
-        # Not persisted to disk; cleared when the app closes.
-        
         self.config = self._load_or_setup_config()
 
         self._build_ui()
         self._build_toolbar()
+        self._retranslate_ui()
 
-    def _build_toolbar(self):
-        toolbar = QToolBar()
-        self.addToolBar(toolbar)
+    def _t(self, key):
+        return get_message(key, self.config.get("language", "en"))
 
-        settings_action = QAction("Settings", self)
-        settings_action.triggered.connect(self._open_settings)
-        toolbar.addAction(settings_action)
+    # ---------------------------------
+    # Config
+    # ---------------------------------
 
     def _load_or_setup_config(self):
         if not CONFIG_PATH.exists():
-            # Fresh install — don't call load_config() here, since it
-            # would try to run a terminal input() prompt for first-run
-            # setup, which doesn't work in a windowed app. Show our
-            # own Settings dialog instead, pre-filled with defaults.
-            dialog = SettingsDialog(DEFAULT_CONFIG, self)
+            dialog = SettingsDialog(DEFAULT_CONFIG, DEFAULT_CONFIG["language"], self)
 
             if dialog.exec():
                 return dialog.updated_config
 
-            # User cancelled first-run setup — fall back to defaults
-            # without writing a config.json, so they'll be asked again
-            # next launch.
             return dict(DEFAULT_CONFIG)
 
         return load_config()
 
+    # ---------------------------------
+    # Toolbar
+    # ---------------------------------
+
+    def _build_toolbar(self):
+        self.toolbar = QToolBar()
+        self.addToolBar(self.toolbar)
+
+        self.settings_action = QAction(self)
+        self.settings_action.triggered.connect(self._open_settings)
+        self.toolbar.addAction(self.settings_action)
+
     def _open_settings(self):
-        dialog = SettingsDialog(self.config, self)
+        dialog = SettingsDialog(self.config, self.config.get("language", "en"), self)
 
         if dialog.exec():
             self.config = dialog.updated_config
-            self.status_label.setText(
-                "Settings saved. Re-scan or reselect a history item to see language changes."
-            )
-            
+            self._retranslate_ui()
+            self.status_label.setText(self._t("gui_status_settings_saved"))
+
+    # ---------------------------------
+    # UI construction
+    # ---------------------------------
+
     def _build_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
@@ -228,20 +231,15 @@ class MainWindow(QMainWindow):
         outer_layout = QVBoxLayout()
         central_widget.setLayout(outer_layout)
 
-        # ---------------------------------
-        # URL input row
-        # ---------------------------------
-
         input_row = QHBoxLayout()
 
         self.url_input = QLineEdit()
-        self.url_input.setPlaceholderText("Enter a website URL...")
         self.url_input.returnPressed.connect(self._on_scan_clicked)
 
-        self.scan_button = QPushButton("Scan")
+        self.scan_button = QPushButton()
         self.scan_button.clicked.connect(self._on_scan_clicked)
 
-        self.qr_button = QPushButton("Scan QR Code")
+        self.qr_button = QPushButton()
         self.qr_button.clicked.connect(self._on_qr_button_clicked)
 
         input_row.addWidget(self.url_input)
@@ -250,18 +248,9 @@ class MainWindow(QMainWindow):
 
         outer_layout.addLayout(input_row)
 
-        # ---------------------------------
-        # Status message (errors, "scanning...")
-        # ---------------------------------
-
-        self.status_label = QLabel("Enter a URL and click Scan.")
+        self.status_label = QLabel()
         self.status_label.setWordWrap(True)
-
         outer_layout.addWidget(self.status_label)
-
-        # ---------------------------------
-        # Split view: history list | results
-        # ---------------------------------
 
         splitter = QSplitter(Qt.Horizontal)
 
@@ -286,13 +275,6 @@ class MainWindow(QMainWindow):
 
         self._build_result_sections()
 
-    def _on_qr_button_clicked(self):
-        dialog = QRScannerDialog(self)
-
-        if dialog.exec() and dialog.detected_url:
-            self.url_input.setText(dialog.detected_url)
-            self._on_scan_clicked()
-
     def _build_result_sections(self):
         self.score_label = QLabel("")
         self.score_label.setAlignment(Qt.AlignCenter)
@@ -303,32 +285,32 @@ class MainWindow(QMainWindow):
 
         self.results_layout.addWidget(self.score_label)
 
-        self.verification_box = QGroupBox("Official Domain Verification")
+        self.verification_box = QGroupBox()
         self.verification_form = QFormLayout()
         self.verification_box.setLayout(self.verification_form)
         self.results_layout.addWidget(self.verification_box)
 
-        self.payment_box = QGroupBox("Official Payment Processor Verification")
+        self.payment_box = QGroupBox()
         self.payment_form = QFormLayout()
         self.payment_box.setLayout(self.payment_form)
         self.results_layout.addWidget(self.payment_box)
 
-        self.page_box = QGroupBox("Payment Page Analysis")
+        self.page_box = QGroupBox()
         self.page_form = QFormLayout()
         self.page_box.setLayout(self.page_form)
         self.results_layout.addWidget(self.page_box)
 
-        self.connection_box = QGroupBox("Connection & SSL")
+        self.connection_box = QGroupBox()
         self.connection_form = QFormLayout()
         self.connection_box.setLayout(self.connection_form)
         self.results_layout.addWidget(self.connection_box)
 
-        self.whois_box = QGroupBox("Domain Information (WHOIS)")
+        self.whois_box = QGroupBox()
         self.whois_form = QFormLayout()
         self.whois_box.setLayout(self.whois_form)
         self.results_layout.addWidget(self.whois_box)
 
-        self.keywords_box = QGroupBox("Detected Keywords")
+        self.keywords_box = QGroupBox()
         keywords_layout = QVBoxLayout()
         self.keywords_label = QLabel("-")
         self.keywords_label.setWordWrap(True)
@@ -341,33 +323,75 @@ class MainWindow(QMainWindow):
         self._clear_result_sections()
 
     def _clear_result_sections(self):
-        for form in (self.verification_form, self.payment_form, self.page_form, self.connection_form, self.whois_form):
+        for form in (
+            self.verification_form,
+            self.payment_form,
+            self.page_form,
+            self.connection_form,
+            self.whois_form
+        ):
             while form.rowCount():
                 form.removeRow(0)
 
         self.score_label.setText("")
-        self.keywords_label.setText("-")
+        self.keywords_label.setText(self._t("gui_no_keywords"))
+
+    # ---------------------------------
+    # Retranslation — called on startup and whenever language changes
+    # ---------------------------------
+
+    def _retranslate_ui(self):
+        self.setWindowTitle("UzBank Shield")
+
+        self.url_input.setPlaceholderText(self._t("gui_url_placeholder"))
+        self.scan_button.setText(self._t("gui_scan_button"))
+        self.qr_button.setText(self._t("gui_qr_button"))
+        self.settings_action.setText(self._t("gui_settings_button"))
+
+        if not self.scan_history:
+            self.status_label.setText(self._t("gui_status_ready"))
+
+        self.verification_box.setTitle(self._t("gui_group_verification"))
+        self.payment_box.setTitle(self._t("gui_group_payment"))
+        self.page_box.setTitle(self._t("gui_group_page_analysis"))
+        self.connection_box.setTitle(self._t("gui_group_connection"))
+        self.whois_box.setTitle(self._t("gui_group_whois"))
+        self.keywords_box.setTitle(self._t("gui_group_keywords"))
+
+        # Re-render the currently displayed result (if any) in the
+        # new language, since form rows were built with the old
+        # language's labels baked in as plain text.
+        if self.last_result:
+            self._clear_result_sections()
+            self._display_result(self.last_result)
+        elif not self.scan_history:
+            self.keywords_label.setText(self._t("gui_no_keywords"))
+
+    # ---------------------------------
+    # Scanning
+    # ---------------------------------
 
     def _on_scan_clicked(self):
         url = self.url_input.text().strip()
 
         if not url:
-            self.status_label.setText("Please enter a URL first.")
+            self.status_label.setText(self._t("gui_status_empty_url"))
             return
 
         if not validate_url(url):
-            self.status_label.setText("Invalid URL format.")
+            self.status_label.setText(self._t("gui_status_invalid_url"))
             return
 
         self._set_scanning_state(True)
         self._clear_result_sections()
-        self.status_label.setText("Scanning... please wait.")
+        self.status_label.setText(self._t("gui_status_scanning"))
 
         self._start_scan(url)
 
     def _set_scanning_state(self, scanning):
         self.scan_button.setEnabled(not scanning)
         self.url_input.setEnabled(not scanning)
+        self.qr_button.setEnabled(not scanning)
 
     def _start_scan(self, url):
         self.thread = QThread()
@@ -387,16 +411,30 @@ class MainWindow(QMainWindow):
 
     def _on_scan_finished(self, result):
         self._set_scanning_state(False)
-        self.status_label.setText(f"Scan complete: {result['components']['original_url']}")
+
+        url = result["components"]["original_url"]
+        self.status_label.setText(f"{self._t('gui_status_scan_complete')}: {url}")
 
         self._add_to_history(result)
+        self.last_result = result
         self._display_result(result)
 
         self.url_input.clear()
 
     def _on_scan_failed(self, error_message):
         self._set_scanning_state(False)
-        self.status_label.setText(f"Scan failed: {error_message}")
+        self.status_label.setText(f"{self._t('gui_status_scan_failed')}: {error_message}")
+
+    def _on_qr_button_clicked(self):
+        dialog = QRScannerDialog(self.config.get("language", "en"), self)
+
+        if dialog.exec() and dialog.detected_url:
+            self.url_input.setText(dialog.detected_url)
+            self._on_scan_clicked()
+
+    # ---------------------------------
+    # History
+    # ---------------------------------
 
     def _add_to_history(self, result):
         self.scan_history.append(result)
@@ -418,121 +456,143 @@ class MainWindow(QMainWindow):
         index = self.history_list.row(item)
         result = self.scan_history[index]
 
+        self.last_result = result
         self._clear_result_sections()
         self._display_result(result)
-        self.status_label.setText(f"Viewing: {result['components']['original_url']}")
+
+        url = result["components"]["original_url"]
+        self.status_label.setText(f"{self._t('gui_status_viewing')}: {url}")
+
+    # ---------------------------------
+    # Results display
+    # ---------------------------------
 
     def _display_result(self, result):
         score = result["score"]
         level = result["level"]
         color = LEVEL_COLORS.get(level, "#ffffff")
 
-        self.score_label.setText(f"{score}/100 — {level} RISK")
+        level_key = f"risk_level_{level.lower()}"
+        self.score_label.setText(f"{score}/100 — {self._t(level_key)}")
         self.score_label.setStyleSheet(f"color: {color};")
+
+        lang = self.config.get("language", "en")
+
+        def yn(value):
+            return get_message("value_yes", lang) if value else get_message("value_no", lang)
 
         verification = result["verification"]
 
-        language = self.config.get("language", "en")
-
         self.verification_form.addRow(
-            "Status:",
+            self._t("gui_field_status"),
             QLabel(
-                get_message("verified", language)
+                get_message("verified", lang)
                 if verification["verified"]
-                else get_message("not_verified", language)
+                else get_message("not_verified", lang)
             )
         )
         self.verification_form.addRow(
-            "Bank:", QLabel(verification["bank"] or "-")
+            self._t("gui_field_bank"), QLabel(verification["bank"] or "-")
         )
         self.verification_form.addRow(
-            "Closest Domain:", QLabel(verification["closest_domain"] or "-")
+            self._t("gui_field_closest_domain"), QLabel(verification["closest_domain"] or "-")
         )
         self.verification_form.addRow(
-            "Similarity:", QLabel(f"{verification['similarity']}%")
+            self._t("gui_field_similarity"), QLabel(f"{verification['similarity']}%")
         )
         self.verification_form.addRow(
-            "Possible Impersonation:",
-            QLabel("Yes" if verification["possible_typosquatting"] else "No")
+            self._t("gui_field_impersonation"),
+            QLabel(yn(verification["possible_typosquatting"]))
         )
 
         payment_verification = result["payment_verification"]
 
         self.payment_form.addRow(
-            "Status:",
-            QLabel("Verified" if payment_verification["verified"] else "Not Verified")
+            self._t("gui_field_status"),
+            QLabel(
+                get_message("verified", lang)
+                if payment_verification["verified"]
+                else get_message("not_verified", lang)
+            )
         )
         self.payment_form.addRow(
-            "Processor:", QLabel(payment_verification["processor"] or "-")
+            self._t("gui_field_processor"), QLabel(payment_verification["processor"] or "-")
         )
         self.payment_form.addRow(
-            "Closest Domain:", QLabel(payment_verification["closest_domain"] or "-")
+            self._t("gui_field_closest_domain"), QLabel(payment_verification["closest_domain"] or "-")
         )
         self.payment_form.addRow(
-            "Similarity:", QLabel(f"{payment_verification['similarity']}%")
+            self._t("gui_field_similarity"), QLabel(f"{payment_verification['similarity']}%")
         )
         self.payment_form.addRow(
-            "Possible Impersonation:",
-            QLabel("Yes" if payment_verification["possible_typosquatting"] else "No")
+            self._t("gui_field_impersonation"),
+            QLabel(yn(payment_verification["possible_typosquatting"]))
         )
 
         page_analysis = result["page_analysis"]
 
         self.page_form.addRow(
-            "Page Analyzed:", QLabel("Yes" if page_analysis["analyzed"] else "No")
+            self._t("gui_field_page_analyzed"),
+            QLabel(yn(page_analysis["analyzed"]))
         )
         self.page_form.addRow(
-            "Requests Card Info:",
-            QLabel("Yes" if page_analysis["requests_card_info"] else "No")
+            self._t("gui_field_requests_card"),
+            QLabel(yn(page_analysis["requests_card_info"]))
         )
 
         connection = result["connection"]
         ssl_info = result["ssl_info"]
 
+        self.connection_form.addRow(self._t("gui_field_protocol"), QLabel(connection["protocol"]))
         self.connection_form.addRow(
-            "Protocol:", QLabel(connection["protocol"])
+            self._t("gui_field_reachable"),
+            QLabel(yn(connection["reachable"]))
         )
         self.connection_form.addRow(
-            "Reachable:", QLabel("Yes" if connection["reachable"] else "No")
-        )
-        self.connection_form.addRow(
-            "Suspicious TLD:", QLabel("Yes" if result["suspicious_tld"] else "No")
+            self._t("gui_field_suspicious_tld"),
+            QLabel(yn(result["suspicious_tld"]))
         )
 
         if ssl_info["valid"] is True:
-            ssl_status = "Valid"
+            ssl_status = self._t("gui_value_valid")
         elif ssl_info["valid"] is False:
-            ssl_status = "Invalid"
+            ssl_status = self._t("gui_value_invalid")
         else:
-            ssl_status = "Not Checked"
+            ssl_status = self._t("gui_value_not_checked")
 
-        self.connection_form.addRow("SSL Certificate:", QLabel(ssl_status))
+        self.connection_form.addRow(self._t("gui_field_ssl_certificate"), QLabel(ssl_status))
         self.connection_form.addRow(
-            "SSL Expires:", QLabel(ssl_info["expires"] or "-")
+            self._t("gui_field_ssl_expires"), QLabel(ssl_info["expires"] or "-")
         )
 
         domain_info = result["domain_info"]
 
         self.whois_form.addRow(
-            "WHOIS Data:",
-            QLabel("Available" if domain_info["available"] else "Not Available")
+            self._t("gui_field_whois_data"),
+            QLabel(
+                self._t("gui_value_available")
+                if domain_info["available"]
+                else self._t("gui_value_not_available")
+            )
         )
         self.whois_form.addRow(
-            "Registrar:", QLabel(domain_info["registrar"] or "-")
+            self._t("gui_field_registrar"), QLabel(domain_info["registrar"] or "-")
         )
         self.whois_form.addRow(
-            "Created:", QLabel(domain_info["created"] or "-")
+            self._t("gui_field_created"), QLabel(domain_info["created"] or "-")
         )
 
         age_text = (
-            f"{domain_info['age_days']} days"
+            f"{domain_info['age_days']} {self._t('gui_days_suffix')}"
             if domain_info["age_days"] is not None
             else "-"
         )
-        self.whois_form.addRow("Domain Age:", QLabel(age_text))
+        self.whois_form.addRow(self._t("gui_field_domain_age"), QLabel(age_text))
 
         keywords = result["keywords"]
-        self.keywords_label.setText(", ".join(keywords) if keywords else "None detected")
+        self.keywords_label.setText(
+            ", ".join(keywords) if keywords else self._t("gui_no_keywords")
+        )
 
 
 def main():

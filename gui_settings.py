@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
 )
 
 from core.config import save_config
+from core.messages import get_message
 
 
 LANGUAGE_OPTIONS = [
@@ -23,22 +24,26 @@ LOG_LEVEL_OPTIONS = ["DEBUG", "INFO", "WARNING", "ERROR"]
 
 
 class SettingsDialog(QDialog):
-    def __init__(self, current_config, parent=None):
+    def __init__(self, current_config, language="en", parent=None):
         super().__init__(parent)
 
-        self.setWindowTitle("Settings")
-        self.setMinimumWidth(300)
-
         self.current_config = current_config
+        self.language = language
         self.updated_config = None
 
+        self.setMinimumWidth(300)
+
         self._build_ui()
+        self._retranslate_ui()
+
+    def _t(self, key):
+        return get_message(key, self.language)
 
     def _build_ui(self):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        form = QFormLayout()
+        self.form = QFormLayout()
 
         self.language_combo = QComboBox()
         for label, code in LANGUAGE_OPTIONS:
@@ -50,7 +55,7 @@ class SettingsDialog(QDialog):
                 self.language_combo.setCurrentIndex(index)
                 break
 
-        form.addRow("Language:", self.language_combo)
+        self.form.addRow(" ", self.language_combo)
 
         self.log_level_combo = QComboBox()
         self.log_level_combo.addItems(LOG_LEVEL_OPTIONS)
@@ -59,17 +64,30 @@ class SettingsDialog(QDialog):
         if current_log_level in LOG_LEVEL_OPTIONS:
             self.log_level_combo.setCurrentText(current_log_level)
 
-        form.addRow("Log Level:", self.log_level_combo)
+        self.form.addRow(" ", self.log_level_combo)
 
-        layout.addLayout(form)
+        layout.addLayout(self.form)
 
-        buttons = QDialogButtonBox(
+        self.buttons = QDialogButtonBox(
             QDialogButtonBox.Save | QDialogButtonBox.Cancel
         )
-        buttons.accepted.connect(self._on_save)
-        buttons.rejected.connect(self.reject)
+        self.buttons.accepted.connect(self._on_save)
+        self.buttons.rejected.connect(self.reject)
 
-        layout.addWidget(buttons)
+        layout.addWidget(self.buttons)
+
+    def _retranslate_ui(self):
+        self.setWindowTitle(self._t("settings_title"))
+
+        self.form.labelForField(self.language_combo).setText(
+            self._t("settings_language_label")
+        )
+        self.form.labelForField(self.log_level_combo).setText(
+            self._t("settings_log_level_label")
+        )
+
+        self.buttons.button(QDialogButtonBox.Save).setText(self._t("settings_save"))
+        self.buttons.button(QDialogButtonBox.Cancel).setText(self._t("settings_cancel"))
 
     def _on_save(self):
         new_config = {

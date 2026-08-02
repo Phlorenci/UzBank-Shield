@@ -9,25 +9,31 @@ appropriate handling rather than assuming every code is a website.
 
 import re
 
+from core.messages import get_message
 
-def classify_qr_content(data, symbology="QRCODE"):
+
+def classify_qr_content(data, symbology="QRCODE", language="en"):
     """
     Classify decoded QR/barcode payload text.
 
     Returns a dict:
         {
             "type": "url" | "wifi" | "vcard" | "email" | "phone" |
-                    "crypto" | "emv_payment" | "barcode" | "unknown",
-            "summary": "<human-readable description>",
+                    "crypto" | "emv_payment" | "barcode" |
+                    "numeric_reference" | "unknown",
+            "summary": "<human-readable description, in the given language>",
             "raw_data": "<original decoded string>",
             "details": {<type-specific extracted fields>}
         }
     """
 
+    def _(key):
+        return get_message(key, language)
+
     if symbology != "QRCODE":
         return {
             "type": "barcode",
-            "summary": f"{symbology} barcode",
+            "summary": _("qr_type_barcode").format(symbology=symbology),
             "raw_data": data,
             "details": {"symbology": symbology, "value": data}
         }
@@ -35,22 +41,22 @@ def classify_qr_content(data, symbology="QRCODE"):
     if data.startswith(("http://", "https://")):
         return {
             "type": "url",
-            "summary": "Website link",
+            "summary": _("qr_type_url"),
             "raw_data": data,
             "details": {"url": data}
         }
 
     if data.startswith("WIFI:"):
-        return _classify_wifi(data)
+        return _classify_wifi(data, language)
 
     if data.startswith("BEGIN:VCARD"):
-        return _classify_vcard(data)
+        return _classify_vcard(data, language)
 
     if data.startswith("mailto:"):
         email = data[len("mailto:"):].split("?")[0]
         return {
             "type": "email",
-            "summary": "Email address",
+            "summary": _("qr_type_email"),
             "raw_data": data,
             "details": {"email": email}
         }
@@ -59,7 +65,7 @@ def classify_qr_content(data, symbology="QRCODE"):
         phone = data[len("tel:"):]
         return {
             "type": "phone",
-            "summary": "Phone number",
+            "summary": _("qr_type_phone"),
             "raw_data": data,
             "details": {"phone": phone}
         }
@@ -69,31 +75,31 @@ def classify_qr_content(data, symbology="QRCODE"):
         address = data.split(":")[1].split("?")[0] if ":" in data else data
         return {
             "type": "crypto",
-            "summary": f"{scheme.capitalize()} payment address",
+            "summary": _("qr_type_crypto_payment").format(scheme=scheme.capitalize()),
             "raw_data": data,
             "details": {"scheme": scheme, "address": address}
         }
 
     if _looks_like_emv_payment(data):
-        return _classify_emv_payment(data)
+        return _classify_emv_payment(data, language)
 
     if _looks_like_numeric_reference(data):
         return {
             "type": "numeric_reference",
-            "summary": "Possible payment or reference number",
+            "summary": _("qr_type_numeric_reference"),
             "raw_data": data,
             "details": {"value": data, "length": len(data)}
         }
 
     return {
         "type": "unknown",
-        "summary": "Plain text or unrecognized format",
+        "summary": _("qr_type_unknown"),
         "raw_data": data,
         "details": {}
     }
 
 
-def _classify_wifi(data):
+def _classify_wifi(data, language="en"):
     """
     Parse WIFI:T:<type>;S:<ssid>;P:<password>;; format.
     """
@@ -109,9 +115,11 @@ def _classify_wifi(data):
     ssid = fields.get("S", "Unknown network")
     security = fields.get("T", "Unknown")
 
+    summary = f"{get_message('qr_type_wifi', language)}: {ssid}"
+
     return {
         "type": "wifi",
-        "summary": f"WiFi network: {ssid}",
+        "summary": summary,
         "raw_data": data,
         "details": {
             "ssid": ssid,
@@ -121,7 +129,7 @@ def _classify_wifi(data):
     }
 
 
-def _classify_vcard(data):
+def _classify_vcard(data, language="en"):
     """
     Extract basic fields from a VCARD payload.
     """
@@ -132,7 +140,7 @@ def _classify_vcard(data):
 
     return {
         "type": "vcard",
-        "summary": "Contact card",
+        "summary": get_message("qr_type_vcard", language),
         "raw_data": data,
         "details": {
             "name": name_match.group(1).strip() if name_match else "Unknown",
@@ -144,40 +152,30 @@ def _classify_vcard(data):
 
 def _looks_like_emv_payment(data):
     """
-    EMV QR Code Payment strings (used by Toss, Alipay, WeChat Pay,
-    and many other mobile payment apps worldwide) follow a
-    Tag-Length-Value structure and always start with tag "00" set
-    to payload format indicator "01".
+    EMV QR Code Payment strings follow a Tag-Length-Value structure
+    and always start with tag "00" set to payload format indicator "01".
     """
 
     return (
         data.startswith("000201")
-        and data[-4:].isdigit()  # CRC checksum, always 4 hex-like digits
+        and data[-4:].isdigit()
         and len(data) > 20
     )
+
 
 def _looks_like_numeric_reference(data):
     """
     Numeric-only strings of meaningful length that don't match any
-    other known format. Could be a partial/regional payment payload,
-    account number, or reference code — flagged as noteworthy rather
-    than a confident classification, since there's no reliable way
-    to distinguish these from other numeric identifiers.
+    other known format.
     """
 
     return data.isdigit() and len(data) >= 10
 
-def _classify_emv_payment(data):
+
+def _classify_emv_payment(data, language="en"):
     """
     Parse the top-level Tag-Length-Value fields of an EMV QR
-    payment string. Doesn't fully decode every possible tag —
-    just extracts the fields useful for a safety summary.
-
-    Note: merchant name/city (tags 59/60) follow the international
-    EMVCo spec, but some regional payment networks (e.g. Korean
-    domestic QR payment systems) encode merchant identity via a
-    bank/PG lookup instead, so these fields may be unavailable even
-    though the QR is correctly identified as a payment code.
+    payment string.
     """
 
     fields = _parse_tlv(data)
@@ -189,9 +187,9 @@ def _classify_emv_payment(data):
     is_dynamic = fields.get("01") == "12"
 
     if merchant_name:
-        summary = f"Payment QR code ({merchant_name})"
+        summary = get_message("qr_type_emv_payment_with_merchant", language).format(merchant=merchant_name)
     else:
-        summary = "Payment QR code"
+        summary = get_message("qr_type_emv_payment", language)
 
     return {
         "type": "emv_payment",
@@ -208,8 +206,7 @@ def _classify_emv_payment(data):
 
 def _parse_tlv(data):
     """
-    Parse EMV QR's Tag-Length-Value encoding: each field is a
-    2-digit tag, 2-digit length, then that many characters of value.
+    Parse EMV QR's Tag-Length-Value encoding.
     """
 
     fields = {}

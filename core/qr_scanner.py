@@ -8,6 +8,22 @@ symbology type if found.
 """
 
 from pyzbar import pyzbar
+from pyzbar.pyzbar import ZBarSymbol
+
+
+# Restrict to symbologies we actually care about. This avoids zbar
+# attempting PDF417/other decodes on every frame, which produces
+# noisy internal assertion warnings on imperfect camera frames
+# without adding any real detection value for this app.
+SUPPORTED_SYMBOLS = [
+    ZBarSymbol.QRCODE,
+    ZBarSymbol.EAN13,
+    ZBarSymbol.EAN8,
+    ZBarSymbol.UPCA,
+    ZBarSymbol.UPCE,
+    ZBarSymbol.CODE128,
+    ZBarSymbol.CODE39
+]
 
 
 def decode_qr_from_frame(frame):
@@ -23,7 +39,7 @@ def decode_qr_from_frame(frame):
     in the frame.
     """
 
-    decoded_objects = pyzbar.decode(frame)
+    decoded_objects = pyzbar.decode(frame, symbols=SUPPORTED_SYMBOLS)
 
     if decoded_objects:
 
