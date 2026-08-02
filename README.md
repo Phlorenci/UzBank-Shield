@@ -1,12 +1,40 @@
 <div align="center">
-  <img src="assets/logo.svg" alt="UzBank Shield logo" width="160">
+  <img src="assets/logo.png" alt="UzBank Shield logo" width="160">
 
   # UzBank Shield
+
+  **Phishing detection for Uzbek banking and payment websites — terminal & desktop app**
+
+  [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+  [![Tests](https://img.shields.io/badge/tests-80%2B%20passing-brightgreen)](docs/changelog.md)
+  [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+  [![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/Phlorenci/UzBank-Shield/releases)
 </div>
 
-UzBank Shield is an open-source Python project that analyzes URLs for common phishing indicators. The project is being developed to explore practical cybersecurity techniques while focusing on online banking safety in Uzbekistan.
+---
 
-Rather than trying to detect every type of cyber threat, the current goal is to identify suspicious banking-related URLs using simple and understandable detection methods. The project will gradually expand with more advanced security checks as development continues.
+UzBank Shield detects phishing websites impersonating Uzbek banks and payment processors — verifying domains against the Central Bank of Uzbekistan's official registry, catching typosquatting, analyzing payment pages for card-stealing forms, and scanning QR codes for hidden threats. Available as both a terminal tool and a desktop app.
+
+<div align="center">
+  <img src="assets/screenshots/main-scan-result.png" alt="UzBank Shield scanning a verified bank domain" width="700">
+</div>
+
+### Catches real threats
+
+<div align="center">
+  <img src="assets/screenshots/threat-detected.png" alt="UzBank Shield detecting a typosquatted phishing domain" width="700">
+</div>
+
+*A URL just one character off from a real bank domain, correctly flagged as likely impersonation.*
+
+### QR code and barcode scanning
+
+<div align="center">
+  <img src="assets/screenshots/qr-scanner.png" alt="Live QR code scanner" width="500">
+  <img src="assets/screenshots/qr-scanner-result.png" alt="QR code classification result" width="500">
+</div>
+
+Scans any QR code or barcode live via webcam — not just website links. Automatically classifies WiFi credentials, payment QR codes (Toss, Alipay, WeChat Pay-style EMV codes), contact cards, and crypto addresses, with a tailored safety assessment for each.
 
 ---
 
@@ -14,7 +42,7 @@ Rather than trying to detect every type of cyber threat, the current goal is to 
 
 Online banking scams have become increasingly common. Attackers often create fake websites that closely resemble legitimate bank pages in order to steal passwords, card details, and SMS verification codes.
 
-UzBank Shield was started as a personal cybersecurity learning project with the long-term goal of helping users recognize suspicious banking websites before entering sensitive information.
+UzBank Shield was started as a personal cybersecurity learning project with the long-term goal of helping users recognize suspicious banking websites before entering sensitive information. It's grown into a full detection engine covering domain verification, typosquatting, SSL/WHOIS analysis, payment page inspection, and QR code safety — all fully localized in English, Russian, and Uzbek.
 
 ---
 
