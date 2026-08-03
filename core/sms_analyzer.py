@@ -13,7 +13,10 @@ import re
 from pathlib import Path
 
 from core.analyzer import URLAnalyzer
-
+from core.database import load_official_domains
+from core.payment_verifier import load_payment_processors
+from core.similarity import get_domain
+from core.messages import get_message
 
 PATTERNS_PATH = Path("data/sms_scam_patterns.json")
 
@@ -21,6 +24,122 @@ URL_PATTERN = re.compile(
     r"(https?://[^\s]+)|(\bwww\.[^\s]+)|(\b[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:/[^\s]*)?)",
     re.IGNORECASE
 )
+
+TIME_PRESSURE_PATTERN = re.compile(
+    r"\b(\d{1,3})\s*(hour|hours|minute|minutes|day|days|soat|kun|daqiqa|час|часа|часов|минут|минуты|день|дня|дней)\b",
+    re.IGNORECASE
+)
+
+IMPERATIVE_VERBS = [
+    "verify", "confirm", "click", "reply", "call", "update", "login", "log in",
+    "подтвердите", "перейдите", "позвоните", "войдите", "нажмите",
+    "tasdiqlang", "kiring", "qo'ng'iroq qiling", "bosing"
+]
+
+
+def _get_known_institution_names():
+    """
+    Build a lookup of known bank/payment processor names to their
+    verified domains, for impersonation-mismatch detection.
+    """
+
+    institutions = {}
+
+    bank_db = load_official_domains()
+    for bank in bank_db["banks"]:
+        institutions[bank["name"].lower()] = bank["domains"]
+
+    payment_db = load_payment_processors()
+    for processor in payment_db["processors"]:
+        institutions[processor["name"].lower()] = processor["domains"]
+
+    return institutions
+
+def detect_institution_impersonation(text, urls):
+    """
+    Check whether the message names a real bank/payment processor,
+    but any link present doesn't match that institution's actual
+    verified domain. This is a strong signal independent of exact
+    scam phrasing — it catches "This is Kapitalbank, verify at
+    kapita1-secure.uz" regardless of how the rest of the message
+    is worded.
+    """
+
+    text_lower = text.lower()
+    institutions = _get_known_institution_names()
+
+    mentioned = []
+
+    for name, domains in institutions.items():
+        if name in text_lower:
+            mentioned.append((name, domains))
+
+    if not mentioned:
+        return {"impersonation_detected": False, "details": []}
+
+    findings = []
+
+    for name, official_domains in mentioned:
+
+        for url in urls:
+            url_domain = get_domain(url if url.startswith(("http://", "https://")) else f"https://{url}")
+
+            matches_official = any(
+                url_domain == official.lower() for official in official_domains
+            )
+
+            if not matches_official:
+                findings.append({
+                    "claimed_institution": name,
+                    "official_domains": official_domains,
+                    "actual_url": url,
+                    "actual_domain": url_domain
+                })
+
+    return {
+        "impersonation_detected": len(findings) > 0,
+        "details": findings
+    }
+
+
+def detect_time_pressure(text):
+    """
+    Regex-based detection of urgency framed around a time limit
+    (e.g. "3 hours", "24 soat", "48 часов"), independent of the
+    exact surrounding phrase used.
+    """
+
+    matches = TIME_PRESSURE_PATTERN.findall(text)
+
+    return {
+        "detected": len(matches) > 0,
+        "matches": [f"{number} {unit}" for number, unit in matches]
+    }
+
+
+def detect_structural_indicators(text, has_url):
+    """
+    Looks for combinations of weaker signals that together suggest
+    a phishing SMS shape, even without any specific trigger phrase:
+    a link present, an imperative/action verb, and a short message
+    (scam SMS are typically brief and direct).
+    """
+
+    text_lower = text.lower()
+
+    has_imperative = any(verb in text_lower for verb in IMPERATIVE_VERBS)
+    is_short = len(text.strip()) < 200
+
+    score = sum([has_url, has_imperative, is_short])
+
+    return {
+        "has_imperative_verb": has_imperative,
+        "is_short_message": is_short,
+        "structural_score": score,
+        # 3/3 signals together is a meaningfully stronger indicator
+        # than any one alone
+        "suspicious_shape": score >= 3
+    }
 
 
 def load_sms_patterns():
@@ -95,6 +214,9 @@ def analyze_message(text):
 
     urls = extract_urls(text)
     matched_patterns = scan_message_patterns(text)
+    impersonation = detect_institution_impersonation(text, urls)
+    time_pressure = detect_time_pressure(text)
+    structural = detect_structural_indicators(text, has_url=len(urls) > 0)
 
     url_results = []
 
@@ -112,17 +234,23 @@ def analyze_message(text):
         "matched_patterns": matched_patterns,
         "pattern_categories_matched": len(matched_patterns),
         "has_url": len(urls) > 0,
-        "has_suspicious_patterns": len(matched_patterns) > 0
+        "has_suspicious_patterns": len(matched_patterns) > 0,
+        "impersonation": impersonation,
+        "time_pressure": time_pressure,
+        "structural": structural
     }
 
-def assess_message_risk(analysis):
+def assess_message_risk(analysis, language="en"):
     """
-    Combine URL analysis results and matched scam patterns into a
-    single overall verdict for the message.
+    Combine URL analysis, matched scam patterns, and structural
+    detections into a single overall verdict for the message.
+    """
 
-    Returns:
-        {"level": "LOW" | "MEDIUM" | "HIGH", "reasons": ["...", ...]}
-    """
+    def _(key):
+        return get_message(key, language)
+
+    def level_word(level):
+        return get_message(f"risk_level_{level.lower()}", language)
 
     reasons = []
     highest_url_level = "LOW"
@@ -141,30 +269,68 @@ def assess_message_risk(analysis):
 
         if url_level in ("MEDIUM", "HIGH"):
             reasons.append(
-                f"Link '{url_result['url']}' scored {url_level} risk"
+                _("sms_reason_link_risk").format(
+                    url=url_result["url"],
+                    level=level_word(url_level)
+                )
             )
 
     pattern_categories = analysis["pattern_categories_matched"]
 
     if pattern_categories > 0:
         category_names = ", ".join(analysis["matched_patterns"].keys())
+
+        if pattern_categories == 1:
+            reasons.append(
+                _("sms_reason_pattern_count_singular").format(categories=category_names)
+            )
+        else:
+            reasons.append(
+                _("sms_reason_pattern_count").format(
+                    count=pattern_categories,
+                    categories=category_names
+                )
+            )
+
+    impersonation_triggered = analysis["impersonation"]["impersonation_detected"]
+
+    if impersonation_triggered:
+        for finding in analysis["impersonation"]["details"]:
+            reasons.append(
+                _("sms_reason_impersonation").format(
+                    institution=finding["claimed_institution"],
+                    domain=finding["actual_domain"]
+                )
+            )
+
+    time_pressure_triggered = analysis["time_pressure"]["detected"]
+
+    if time_pressure_triggered:
         reasons.append(
-            f"Message contains {pattern_categories} scam indicator "
-            f"categor{'y' if pattern_categories == 1 else 'ies'}: {category_names}"
+            _("sms_reason_time_pressure").format(
+                matches=", ".join(analysis["time_pressure"]["matches"])
+            )
         )
 
-    # Combine: multiple matched pattern categories alone is a strong
-    # signal even without a risky URL, since many scam SMS have no
-    # link at all (e.g. "reply with your PIN").
-    if pattern_categories >= 2 or highest_url_level == "HIGH":
+    structural_triggered = analysis["structural"]["suspicious_shape"]
+
+    if structural_triggered:
+        reasons.append(_("sms_reason_structural"))
+
+    if impersonation_triggered or pattern_categories >= 2 or highest_url_level == "HIGH":
         level = "HIGH"
-    elif pattern_categories == 1 or highest_url_level == "MEDIUM":
+    elif (
+        pattern_categories == 1
+        or highest_url_level == "MEDIUM"
+        or time_pressure_triggered
+        or structural_triggered
+    ):
         level = "MEDIUM"
     else:
         level = "LOW"
 
     if not reasons:
-        reasons.append("No suspicious links or scam language detected")
+        reasons.append(_("sms_reason_none"))
 
     return {
         "level": level,

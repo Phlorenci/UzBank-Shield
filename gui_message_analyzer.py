@@ -139,10 +139,11 @@ class MessageAnalyzerDialog(QDialog):
     def _on_analysis_finished(self, analysis):
         self.analyze_button.setEnabled(True)
 
-        risk = assess_message_risk(analysis)
+        risk = assess_message_risk(analysis, self.language)
         color = LEVEL_COLORS.get(risk["level"], "#e6f1f7")
 
-        verdict_label = QLabel(f"{self._t('message_dialog_verdict')}: {risk['level']}")
+        level_word = self._t(f"risk_level_{risk['level'].lower()}")
+        verdict_label = QLabel(f"{self._t('message_dialog_verdict')}: {level_word}")
         verdict_label.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 16px;")
         self.results_layout.addWidget(verdict_label)
 
@@ -162,10 +163,11 @@ class MessageAnalyzerDialog(QDialog):
                     level = url_result["analysis"]["level"]
                     score = url_result["analysis"]["score"]
                     level_color = LEVEL_COLORS.get(level, "#e6f1f7")
-                    line = QLabel(f"{url} — {score}/100 ({level})")
+                    translated_level = self._t(f"risk_level_{level.lower()}")
+                    line = QLabel(f"{url} — {score}/100 ({translated_level})")
                     line.setStyleSheet(f"color: {level_color};")
                 else:
-                    line = QLabel(f"{url} — analysis failed")
+                    line = QLabel(f"{url} — {self._t('sms_analysis_failed')}")
 
                 line.setWordWrap(True)
                 url_layout.addWidget(line)
@@ -189,7 +191,48 @@ class MessageAnalyzerDialog(QDialog):
             pattern_box.setLayout(pattern_layout)
             self.results_layout.addWidget(pattern_box)
 
-        if not analysis["has_url"] and not analysis["has_suspicious_patterns"]:
+        impersonation = analysis["impersonation"]
+
+        if impersonation["impersonation_detected"]:
+            impersonation_box = QGroupBox(self._t("message_dialog_impersonation_found"))
+            impersonation_layout = QVBoxLayout()
+
+            for finding in impersonation["details"]:
+                line = QLabel(
+                    f"\"{finding['claimed_institution'].title()}\" → "
+                    f"{finding['actual_domain']} "
+                    f"(official: {', '.join(finding['official_domains'])})"
+                )
+                line.setWordWrap(True)
+                line.setStyleSheet("color: #e74c3c;")
+                impersonation_layout.addWidget(line)
+
+            impersonation_box.setLayout(impersonation_layout)
+            self.results_layout.addWidget(impersonation_box)
+
+        if analysis["time_pressure"]["detected"]:
+            time_label = QLabel(
+                f"⚠ {self._t('message_dialog_time_pressure_found')}: "
+                f"{', '.join(analysis['time_pressure']['matches'])}"
+            )
+            time_label.setWordWrap(True)
+            time_label.setStyleSheet("color: #f1c40f;")
+            self.results_layout.addWidget(time_label)
+
+        if analysis["structural"]["suspicious_shape"]:
+            structural_label = QLabel(f"⚠ {self._t('message_dialog_structural_found')}")
+            structural_label.setStyleSheet("color: #f1c40f;")
+            self.results_layout.addWidget(structural_label)
+
+        no_findings = (
+            not analysis["has_url"]
+            and not analysis["has_suspicious_patterns"]
+            and not impersonation["impersonation_detected"]
+            and not analysis["time_pressure"]["detected"]
+            and not analysis["structural"]["suspicious_shape"]
+        )
+
+        if no_findings:
             self.results_layout.addWidget(QLabel(self._t("message_dialog_no_findings")))
 
         self.results_layout.addStretch()
