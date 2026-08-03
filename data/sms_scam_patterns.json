@@ -1,0 +1,119 @@
+{
+    "version": "1.3.0",
+    "description": "Phrase patterns commonly found in SMS/message-based scams, across English, Russian, and Uzbek.",
+    "categories": {
+        "urgency": {
+            "en": [
+                "act now",
+                "act immediately",
+                "immediately verify",
+                "verify now",
+                "will be suspended",
+                "will be blocked",
+                "within 24 hours",
+                "within 12 hours",
+                "urgent action required",
+                "your account has been locked"
+            ],
+            "ru": [
+                "срочно",
+                "немедленно",
+                "подтвердите сейчас",
+                "будет заблокирован",
+                "будет приостановлен",
+                "в течение 24 часов",
+                "в течение 12 часов",
+                "требуется срочное действие",
+                "ваш счет заблокирован",
+                "ваша карта заблокирована"
+            ],
+            "uz": [
+                "zudlik bilan",
+                "hoziroq tasdiqlang",
+                "bloklanadi",
+                "to'xtatiladi",
+                "24 soat ichida",
+                "12 soat ichida",
+                "shoshilinch chora talab qilinadi",
+                "hisobingiz bloklandi",
+                "kartangiz bloklandi"
+            ]
+        },
+        "sensitive_info_request": {
+            "en": [
+                "reply with your pin",
+                "send your otp",
+                "send your code",
+                "confirm your card number",
+                "provide your password",
+                "share your cvv",
+                "enter your pin"
+            ],
+            "ru": [
+                "отправьте пин-код",
+                "отправьте код подтверждения",
+                "сообщите код",
+                "подтвердите номер карты",
+                "укажите пароль",
+                "сообщите cvv",
+                "введите пин-код"
+            ],
+            "uz": [
+                "pin kodni yuboring",
+                "tasdiqlash kodini yuboring",
+                "kodni ayting",
+                "karta raqamini tasdiqlang",
+                "parolni kiriting",
+                "cvv kodni ayting",
+                "pin kodni kiriting"
+            ]
+        },
+        "too_good_to_be_true": {
+            "en": [
+                "you have won",
+                "you've won",
+                "claim your prize",
+                "free gift",
+                "congratulations you",
+                "lucky winner"
+            ],
+            "ru": [
+                "вы выиграли",
+                "получите приз",
+                "бесплатный подарок",
+                "поздравляем вас",
+                "счастливый победитель"
+            ],
+            "uz": [
+                "siz yutdingiz",
+                "sovg'angizni oling",
+                "bepul sovg'a",
+                "tabriklaymiz",
+                "baxtli g'olib"
+            ]
+        },
+        "fake_authority": {
+            "en": [
+                "security department",
+                "official notice",
+                "bank security team",
+                "this is your bank",
+                "fraud department"
+            ],
+            "ru": [
+                "служба безопасности",
+                "официальное уведомление",
+                "служба безопасности банка",
+                "это ваш банк",
+                "отдел по борьбе с мошенничеством"
+            ],
+            "uz": [
+                "xavfsizlik bo'limi",
+                "rasmiy xabarnoma",
+                "bank xavfsizlik xizmati",
+                "bu sizning bankingiz",
+                "firibgarlikka qarshi bo'lim"
+            ]
+        }
+    }
+}

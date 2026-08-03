@@ -31,6 +31,7 @@ from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
 from core.messages import get_message
 from gui_settings import SettingsDialog
 from gui_qr_scanner import QRScannerDialog
+from gui_message_analyzer import MessageAnalyzerDialog
 
 
 LEVEL_COLORS = {
@@ -236,15 +237,20 @@ class MainWindow(QMainWindow):
         self.url_input = QLineEdit()
         self.url_input.returnPressed.connect(self._on_scan_clicked)
 
+        #scan button
         self.scan_button = QPushButton()
         self.scan_button.clicked.connect(self._on_scan_clicked)
-
+        # QR button
         self.qr_button = QPushButton()
         self.qr_button.clicked.connect(self._on_qr_button_clicked)
+        # message button
+        self.message_button = QPushButton()
+        self.message_button.clicked.connect(self._on_message_button_clicked)
 
         input_row.addWidget(self.url_input)
         input_row.addWidget(self.scan_button)
         input_row.addWidget(self.qr_button)
+        input_row.addWidget(self.message_button)
 
         outer_layout.addLayout(input_row)
 
@@ -346,6 +352,7 @@ class MainWindow(QMainWindow):
         self.url_input.setPlaceholderText(self._t("gui_url_placeholder"))
         self.scan_button.setText(self._t("gui_scan_button"))
         self.qr_button.setText(self._t("gui_qr_button"))
+        self.message_button.setText(self._t("gui_message_button"))
         self.settings_action.setText(self._t("gui_settings_button"))
 
         if not self.scan_history:
@@ -431,6 +438,10 @@ class MainWindow(QMainWindow):
         if dialog.exec() and dialog.detected_url:
             self.url_input.setText(dialog.detected_url)
             self._on_scan_clicked()
+
+    def _on_message_button_clicked(self):
+        dialog = MessageAnalyzerDialog(self.config.get("language", "en"), self)
+        dialog.exec()
 
     # ---------------------------------
     # History
