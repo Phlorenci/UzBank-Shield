@@ -158,7 +158,7 @@ dependency for QR decoding.
 
 # Version 1.3 – SMS Scam Detection
 
-Planned
+Completed
 
 - Analyze SMS messages
 - Detect phishing links

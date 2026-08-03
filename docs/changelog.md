@@ -221,3 +221,29 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
 ### Dependencies
 - Added opencv-python, pyzbar (QR/barcode scanning)
 - Added qrcode, Pillow (test-time QR image generation)
+
+---
+
+## Version 1.3
+
+### Added
+- SMS/message scam analysis (desktop GUI): paste any message text 
+  to extract and analyze URLs, and scan for scam indicators
+- Multilingual scam phrase detection (English, Russian, Uzbek) across 
+  four categories: urgency, sensitive info requests, too-good-to-be-true 
+  claims, and fake authority
+- Institution impersonation detection: flags messages claiming to be 
+  from a real bank/payment processor when the linked domain doesn't 
+  match their actual verified domain
+- Generic time-pressure detection (regex-based): catches urgency 
+  framed around any time limit, not just pre-written phrases
+- Structural heuristics: detects the general shape of phishing SMS 
+  (short message + link + call-to-action verb) even without any 
+  specific trigger phrase
+- Full localization of SMS analysis results (EN/RU/UZ)
+
+### Testing
+- Added tests/test_sms_analyzer.py covering URL extraction, pattern 
+  matching, impersonation detection, time-pressure regex, structural 
+  heuristics, and combined risk assessment
+- 100+ tests passing total
