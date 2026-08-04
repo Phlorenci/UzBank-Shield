@@ -6,9 +6,9 @@
   **Phishing detection for Uzbek banking and payment websites — terminal & desktop app**
 
   [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
-  [![Tests](https://img.shields.io/badge/tests-80%2B%20passing-brightgreen)](docs/changelog.md)
-  [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-  [![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/Phlorenci/UzBank-Shield/releases)
+[![Tests](https://github.com/Phlorenci/UzBank-Shield/actions/workflows/tests.yml/badge.svg)](https://github.com/Phlorenci/UzBank-Shield/actions/workflows/tests.yml)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue)](https://github.com/Phlorenci/UzBank-Shield/releases)
 </div>
 
 ---
