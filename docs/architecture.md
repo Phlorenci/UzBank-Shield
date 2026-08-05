@@ -65,79 +65,76 @@ UZBANK-SHIELD
 │
 ├── detector.py
 ├── gui.py
-├── gui_settings.py
-├── gui_qr_scanner.py
+│
+├── gui
+│   ├── __init__.py
+│   ├── settings_dialog.py
+│   ├── qr_scanner_dialog.py
+│   ├── message_analyzer_dialog.py
+│   └── ai_assistant_dialog.py
 │
 ├── core
-│ ├── analyzer.py
-│ ├── banner.py
-│ ├── config.py
-│ ├── database.py
-│ ├── https_checker.py
-│ ├── input_handler.py
-│ ├── logger.py
-│ ├── messages.py
-│ ├── parser.py
-│ ├── page_analyzer.py
-│ ├── payment_verifier.py
-│ ├── qr_scanner.py
-│ ├── qr_classifier.py
-│ ├── qr_safety.py
-│ ├── qr_worker.py
-│ ├── reporter.py
-│ ├── risk.py
-│ ├── scanner.py
-│ ├── similarity.py
-│ ├── ssl_checker.py
-│ ├── theme.py
-│ ├── tld.py
-│ ├── validator.py
-│ ├── verifier.py
-│ ├── whois_checker.py
-│ └── version.py
+│   ├── analyzer.py
+│   ├── ai_assistant.py
+│   ├── banner.py
+│   ├── config.py
+│   ├── database.py
+│   ├── https_checker.py
+│   ├── input_handler.py
+│   ├── logger.py
+│   ├── messages.py
+│   ├── page_analyzer.py
+│   ├── parser.py
+│   ├── payment_verifier.py
+│   ├── qr_classifier.py
+│   ├── qr_safety.py
+│   ├── qr_scanner.py
+│   ├── qr_worker.py
+│   ├── reporter.py
+│   ├── risk.py
+│   ├── scanner.py
+│   ├── similarity.py
+│   ├── sms_analyzer.py
+│   ├── ssl_checker.py
+│   ├── theme.py
+│   ├── tld.py
+│   ├── validator.py
+│   ├── verifier.py
+│   ├── whois_checker.py
+│   └── __version__.py
 │
 ├── data
-│ ├── official_domains.json
-│ └── official_payment_processors.json
+│   ├── official_domains.json
+│   ├── official_payment_processors.json
+│   └── sms_scam_patterns.json
 │
 ├── assets
-│ ├── logo.svg
-│ ├── logo.png
-│ └── logo.txt
+│   ├── logo.svg
+│   ├── logo.png
+│   ├── uzbank_shield_logo.ico
+│   └── screenshots/
 │
 ├── logs
-│ ├── scan_history.log
-│ └── debug.log
+│   ├── scan_history.log
+│   └── debug.log
 │
 ├── tests
-│ ├── test_analyzer.py
-│ ├── test_cli.py
-│ ├── test_config.py
-│ ├── test_https.py
-│ ├── test_logger.py
-│ ├── test_messages.py
-│ ├── test_parser.py
-│ ├── test_payment_verifier.py
-│ ├── test_risk.py
-│ ├── test_similarity.py
-│ ├── test_tld.py
-│ ├── test_validator.py
-│ ├── test_verifier.py
-│ └── test_whois.py
+│   └── test_*.py  (30+ test files)
 │
 ├── docs
-│ ├── architecture.md
-│ ├── changelog.md
-│ ├── database.md
-│ └── roadmap.md
+│   ├── architecture.md
+│   ├── changelog.md
+│   ├── database.md
+│   └── roadmap.md
+│
+├── .github
+│   └── workflows
+│       └── tests.yml
 │
 ├── config.json.default
 ├── requirements.txt
 ├── CONTRIBUTING.md
-└── README.md
-
-
----
+└── README.md 
 
 ---
 
@@ -156,15 +153,21 @@ Responsibilities:
 
 ---
 
-## gui.py / gui_settings.py
+## gui.py / gui/
 
-Desktop application entry point (PySide6).
+Desktop application entry point (PySide6) and its dialog modules.
+
+**gui.py** — main window: URL input, results display, scan history, toolbar
+**gui/settings_dialog.py** — language, log level, OpenAI API key
+**gui/qr_scanner_dialog.py** — live webcam QR/barcode scanning
+**gui/message_analyzer_dialog.py** — SMS/message scam analysis
+**gui/ai_assistant_dialog.py** — AI Security Assistant chat
 
 Responsibilities:
 
 - Builds the main window, results view, and scan history list
 - Runs scans on a background thread (`QThread` + worker object) to keep the UI responsive during network I/O
-- Provides a Settings dialog for language and log level, including first-run setup on a fresh install
+- Provides a Settings dialog for language, log level, and OpenAI API key, including first-run setup on a fresh install
 - Applies the app's dark theme and window icon
 
 ---
