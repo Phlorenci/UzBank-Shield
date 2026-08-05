@@ -247,3 +247,25 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
   matching, impersonation detection, time-pressure regex, structural 
   heuristics, and combined risk assessment
 - 100+ tests passing total
+
+---
+
+## Version 1.4
+
+### Added
+- AI Security Assistant (desktop GUI): chat interface for asking 
+  security/phishing questions, automatically grounded in the current 
+  scan result when one exists
+- Bring-your-own-key design (OpenAI): no shared API key, no cost to 
+  the project, avoids the abuse/leaked-key risks of an embedded key
+- System-prompt scoping keeps the assistant focused on security 
+  topics rather than open-ended general chat
+- Full localization of the assistant dialog (EN/RU/UZ)
+
+### Testing
+- Added tests/test_ai_assistant.py: error handling, context 
+  formatting, mocked API success/failure paths
+- 100+ tests passing total
+
+### Dependencies
+- Added openai

@@ -168,7 +168,7 @@ Completed
 
 # Version 1.4 – AI Security Assistant
 
-Planned
+Completed 
 
 - Explain why a website is suspicious
 - Answer user questions
