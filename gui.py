@@ -4,6 +4,7 @@ UzBank Shield - Desktop GUI entry point.
 
 import sys
 from pathlib import Path
+import ctypes
 
 from PySide6.QtWidgets import (
     QApplication,
@@ -29,11 +30,10 @@ from core.validator import validate_url
 from core.analyzer import URLAnalyzer
 from core.config import load_config, save_config, CONFIG_PATH, DEFAULT_CONFIG
 from core.messages import get_message
-from gui_settings import SettingsDialog
-from gui_qr_scanner import QRScannerDialog
-from gui_message_analyzer import MessageAnalyzerDialog
-from gui_ai_assistant import AIAssistantDialog
-
+from gui.settings_dialog import SettingsDialog
+from gui.qr_scanner_dialog import QRScannerDialog
+from gui.message_analyzer_dialog import MessageAnalyzerDialog
+from gui.ai_assistant_dialog import AIAssistantDialog
 
 LEVEL_COLORS = {
     "LOW": "#2ecc71",
@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.png"
+        icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.ico"
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
@@ -622,10 +622,13 @@ class MainWindow(QMainWindow):
 
 
 def main():
+    if sys.platform == "win32":
+        app_id = "UzBankShield.DesktopApp.1.0"
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(app_id)
     app = QApplication(sys.argv)
     app.setStyleSheet(DARK_STYLESHEET)
 
-    icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.png"
+    icon_path = Path(__file__).parent / "assets" / "uzbank_shield_logo.ico"
     if icon_path.exists():
         app.setWindowIcon(QIcon(str(icon_path)))
 
