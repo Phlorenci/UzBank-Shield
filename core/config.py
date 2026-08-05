@@ -20,7 +20,8 @@ LANGUAGE_NAMES = {
 
 DEFAULT_CONFIG = {
     "language": "en",
-    "log_level": "INFO"
+    "log_level": "INFO",
+    "openai_api_key": ""
 }
 
 

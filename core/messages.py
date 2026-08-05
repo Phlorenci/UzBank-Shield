@@ -123,6 +123,9 @@ MESSAGES = {
         "gui_value_not_available": "Not Available",
         "gui_days_suffix": "days",
         "gui_message_button": "Analyze Message",
+        "gui_ai_button": "Ask AI",
+
+        # message dialog
         "message_dialog_title": "Analyze Message",
         "message_dialog_placeholder": "Paste the SMS or message text here...",
         "message_dialog_analyze": "Analyze",
@@ -139,6 +142,7 @@ MESSAGES = {
         "message_dialog_impersonation_found": "Institution Impersonation Detected",
         "message_dialog_time_pressure_found": "Time-Pressure Language Detected",
         "message_dialog_structural_found": "Suspicious Message Structure",
+
         "sms_reason_link_risk": "Link '{url}' scored {level} risk",
         "sms_reason_pattern_count": "Message contains {count} scam indicator categories: {categories}",
         "sms_reason_pattern_count_singular": "Message contains 1 scam indicator category: {categories}",
@@ -154,6 +158,8 @@ MESSAGES = {
         "settings_log_level_label": "Log Level:",
         "settings_save": "Save",
         "settings_cancel": "Cancel",
+        "settings_openai_key_label": "OpenAI API Key:",
+        "settings_openai_key_placeholder": "sk-...",
 
         # QR dialog
         "qr_dialog_title": "Scan QR Code",
@@ -197,6 +203,15 @@ MESSAGES = {
         "risk_level_low": "LOW RISK",
         "risk_level_medium": "MEDIUM RISK",
         "risk_level_high": "HIGH RISK",
+
+        # AI dialog
+        "ai_dialog_title": "Security Assistant",
+        "ai_dialog_placeholder": "Ask a security question...",
+        "ai_dialog_send": "Send",
+        "ai_dialog_close": "Close",
+        "ai_dialog_no_key": "No OpenAI API key configured. Add one in Settings.",
+        "ai_dialog_thinking": "Thinking...",
+        "ai_dialog_context_notice": "This conversation includes context from your last scan of {url}. Ask me anything about it, or ask a general security question.",
 
         # Result values
         "value_pass": "PASS",
@@ -338,6 +353,9 @@ MESSAGES = {
         "gui_value_not_available": "Недоступно",
         "gui_days_suffix": "дни",
         "gui_message_button": "Анализ сообщения",
+        "gui_ai_button": "Спросить ИИ",
+
+        # message dialog
         "message_dialog_title": "Анализ сообщения",
         "message_dialog_placeholder": "Вставьте текст SMS или сообщения сюда...",
         "message_dialog_analyze": "Анализировать",
@@ -369,6 +387,8 @@ MESSAGES = {
         "settings_log_level_label": "Уровень журнала:",
         "settings_save": "Сохранить",
         "settings_cancel": "Отмена",
+        "settings_openai_key_label": "Ключ API OpenAI:",
+        "settings_openai_key_placeholder": "sk-...",
 
         # QR dialog
         "qr_dialog_title": "Сканировать QR-код",
@@ -412,6 +432,15 @@ MESSAGES = {
         "risk_level_low": "НИЗКИЙ РИСК",
         "risk_level_medium": "СРЕДНИЙ РИСК",
         "risk_level_high": "ВЫСОКИЙ РИСК",
+
+        # AI dialog
+        "ai_dialog_title": "Помощник по безопасности",
+        "ai_dialog_placeholder": "Задайте вопрос о безопасности...",
+        "ai_dialog_send": "Отправить",
+        "ai_dialog_close": "Закрыть",
+        "ai_dialog_no_key": "Ключ API OpenAI не настроен. Добавьте его в настройках.",
+        "ai_dialog_thinking": "Думаю...",
+        "ai_dialog_context_notice": "Этот разговор учитывает данные последнего сканирования {url}. Спросите что угодно об этом или задайте общий вопрос о безопасности.",
 
         # Result values
         "value_pass": "ПРОЙДЕНО",
@@ -553,6 +582,9 @@ MESSAGES = {
         "gui_value_not_available": "Mavjud emas",
         "gui_days_suffix": "kun",
         "gui_message_button": "Xabarni tahlil qilish",
+        "gui_ai_button": "AI'dan so'rash",
+
+        # message dialog
         "message_dialog_title": "Xabarni tahlil qilish",
         "message_dialog_placeholder": "SMS yoki xabar matnini shu yerga joylashtiring...",
         "message_dialog_analyze": "Tahlil qilish",
@@ -584,6 +616,8 @@ MESSAGES = {
         "settings_log_level_label": "Jurnal darajasi:",
         "settings_save": "Saqlash",
         "settings_cancel": "Bekor qilish",
+        "settings_openai_key_label": "OpenAI API kaliti:",
+        "settings_openai_key_placeholder": "sk-...",
 
         # QR dialog
         "qr_dialog_title": "QR-kodni skanerlash",
@@ -627,6 +661,15 @@ MESSAGES = {
         "risk_level_low": "PAST XAVF",
         "risk_level_medium": "O'RTA XAVF",
         "risk_level_high": "YUQORI XAVF",
+
+        #AI dialog
+        "ai_dialog_title": "Xavfsizlik yordamchisi",
+        "ai_dialog_placeholder": "Xavfsizlik haqida savol bering...",
+        "ai_dialog_send": "Yuborish",
+        "ai_dialog_close": "Yopish",
+        "ai_dialog_no_key": "OpenAI API kaliti sozlanmagan. Sozlamalarda qo'shing.",
+        "ai_dialog_thinking": "O'ylanmoqda...",
+        "ai_dialog_context_notice": "Ushbu suhbat {url} bo'yicha oxirgi skanerlash ma'lumotlarini o'z ichiga oladi. Bu haqda xohlagan narsangizni so'rang yoki umumiy xavfsizlik savolini bering.",
 
         # Result values
         "value_pass": "O'TDI",

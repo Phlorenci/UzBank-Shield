@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 
 from core.config import save_config
 from core.messages import get_message
+from PySide6.QtWidgets import QLineEdit
 
 
 LANGUAGE_OPTIONS = [
@@ -60,6 +61,12 @@ class SettingsDialog(QDialog):
         self.log_level_combo = QComboBox()
         self.log_level_combo.addItems(LOG_LEVEL_OPTIONS)
 
+        self.api_key_input = QLineEdit()
+        self.api_key_input.setEchoMode(QLineEdit.Password)
+        self.api_key_input.setText(self.current_config.get("openai_api_key", ""))
+
+        self.form.addRow(" ", self.api_key_input)
+
         current_log_level = self.current_config.get("log_level", "INFO")
         if current_log_level in LOG_LEVEL_OPTIONS:
             self.log_level_combo.setCurrentText(current_log_level)
@@ -85,6 +92,10 @@ class SettingsDialog(QDialog):
         self.form.labelForField(self.log_level_combo).setText(
             self._t("settings_log_level_label")
         )
+        self.form.labelForField(self.api_key_input).setText(
+            self._t("settings_openai_key_label")
+        )
+        self.api_key_input.setPlaceholderText(self._t("settings_openai_key_placeholder"))
 
         self.buttons.button(QDialogButtonBox.Save).setText(self._t("settings_save"))
         self.buttons.button(QDialogButtonBox.Cancel).setText(self._t("settings_cancel"))
@@ -92,7 +103,8 @@ class SettingsDialog(QDialog):
     def _on_save(self):
         new_config = {
             "language": self.language_combo.currentData(),
-            "log_level": self.log_level_combo.currentText()
+            "log_level": self.log_level_combo.currentText(),
+            "openai_api_key": self.api_key_input.text().strip()
         }
 
         self.updated_config = save_config(new_config)

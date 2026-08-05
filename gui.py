@@ -32,6 +32,7 @@ from core.messages import get_message
 from gui_settings import SettingsDialog
 from gui_qr_scanner import QRScannerDialog
 from gui_message_analyzer import MessageAnalyzerDialog
+from gui_ai_assistant import AIAssistantDialog
 
 
 LEVEL_COLORS = {
@@ -246,11 +247,15 @@ class MainWindow(QMainWindow):
         # message button
         self.message_button = QPushButton()
         self.message_button.clicked.connect(self._on_message_button_clicked)
+        # AI assistant button
+        self.ai_button = QPushButton()
+        self.ai_button.clicked.connect(self._on_ai_button_clicked)
 
         input_row.addWidget(self.url_input)
         input_row.addWidget(self.scan_button)
         input_row.addWidget(self.qr_button)
         input_row.addWidget(self.message_button)
+        input_row.addWidget(self.ai_button)
 
         outer_layout.addLayout(input_row)
 
@@ -354,6 +359,7 @@ class MainWindow(QMainWindow):
         self.qr_button.setText(self._t("gui_qr_button"))
         self.message_button.setText(self._t("gui_message_button"))
         self.settings_action.setText(self._t("gui_settings_button"))
+        self.ai_button.setText(self._t("gui_ai_button"))
 
         if not self.scan_history:
             self.status_label.setText(self._t("gui_status_ready"))
@@ -441,6 +447,15 @@ class MainWindow(QMainWindow):
 
     def _on_message_button_clicked(self):
         dialog = MessageAnalyzerDialog(self.config.get("language", "en"), self)
+        dialog.exec()
+
+    def _on_ai_button_clicked(self):
+        dialog = AIAssistantDialog(
+            self.config.get("openai_api_key", ""),
+            self.config.get("language", "en"),
+            self.last_result,
+            self
+        )
         dialog.exec()
 
     # ---------------------------------
