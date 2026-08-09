@@ -8,7 +8,7 @@
   [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
 [![Tests](https://github.com/Phlorenci/UzBank-Shield/actions/workflows/tests.yml/badge.svg)](https://github.com/Phlorenci/UzBank-Shield/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-blue)](https://github.com/Phlorenci/UzBank-Shield/releases)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue)](https://github.com/Phlorenci/UzBank-Shield/releases)
 </div>
 
 ---
@@ -48,7 +48,7 @@ UzBank Shield was started as a personal cybersecurity learning project with the 
 
 ## Current Features
 
-Current version: **v1.4.0**
+Current version: **v1.5.0**
 
 **Core Detection**
 - URL parsing, validation, and phishing keyword detection
@@ -61,6 +61,7 @@ Current version: **v1.4.0**
 - Fully localized desktop GUI (English, Russian, Uzbek)
 - SMS/message scam analysis with multilingual pattern detection and institution impersonation checks
 - AI Security Assistant (bring-your-own OpenAI key) — explains scan results and answers security questions
+- Email phishing analysis (sender spoofing, hidden link detection, headers-aware)
 
 **Interfaces**
 - Terminal application with Rich-based reporting

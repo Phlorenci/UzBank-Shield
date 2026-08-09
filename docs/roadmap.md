@@ -178,7 +178,7 @@ Completed
 
 # Version 1.5 – Email Phishing Analyzer
 
-Planned
+Completed
 
 - Paste raw email content (headers + body) for phishing analysis
 - Sender display-name vs. actual email domain mismatch detection

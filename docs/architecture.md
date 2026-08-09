@@ -68,10 +68,12 @@ UZBANK-SHIELD
 │
 ├── gui
 │   ├── __init__.py
-│   ├── settings_dialog.py
-│   ├── qr_scanner_dialog.py
+│   ├── ai_assistant_dialog.py
+│   ├── email_analyzer_dialog.py
 │   ├── message_analyzer_dialog.py
-│   └── ai_assistant_dialog.py
+│   ├── qr_scanner_dialog.py
+│   ├── settings_dialog.py
+│
 │
 ├── core
 │   ├── analyzer.py
@@ -79,8 +81,10 @@ UZBANK-SHIELD
 │   ├── banner.py
 │   ├── config.py
 │   ├── database.py
+│   ├── email_analyzer.py
 │   ├── https_checker.py
 │   ├── input_handler.py
+│   ├── institution_lookup.py
 │   ├── logger.py
 │   ├── messages.py
 │   ├── page_analyzer.py
@@ -181,6 +185,31 @@ Responsibilities:
 - Runs the complete scan pipeline: parsing, keyword scanning, bank verification, payment processor verification, TLD check, HTTPS/SSL check, WHOIS lookup, and risk scoring
 - Returns a single structured result dict, with no printing or presentation logic of its own
 - Performs real network I/O (HTTPS, SSL, WHOIS), so callers on a UI thread should run it in the background
+
+---
+
+## core/institution_lookup.py
+
+Shared lookup of known bank/payment processor names to their 
+verified domains. Used by both the SMS and email analyzers for 
+institution impersonation detection.
+
+---
+
+## core/email_analyzer.py
+
+Analyzes pasted email content for phishing indicators.
+
+Responsibilities:
+
+- Detect whether real email headers are present (raw source) vs. 
+  casually pasted text, and honestly disclose which analysis mode 
+  was used
+- Parse sender/reply-to headers when available
+- Detect sender domain spoofing and Reply-To mismatches
+- Detect HTML "hidden link" tricks (displayed text vs. actual URL)
+- Extract and analyze URLs via URLAnalyzer
+- Reuse scam pattern and time-pressure detection from sms_analyzer.py
 
 ---
 

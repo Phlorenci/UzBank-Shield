@@ -269,3 +269,39 @@ Dark theme + app icon addition — this shipped as its own commit after the v0.8
 
 ### Dependencies
 - Added openai
+
+---
+
+## Version 1.5
+
+### Added
+- Email phishing analysis (desktop GUI): paste raw email source or 
+  casually copied email text for analysis
+- Sender spoofing detection: flags when a claimed institution's name 
+  doesn't match the actual From address domain
+- Reply-To mismatch detection: catches when Reply-To silently differs 
+  from the From address, a common spoofing trick that works even 
+  when the From domain itself looks legitimate
+- Hidden link detection: catches HTML emails where the displayed link 
+  text (e.g. "kapitalbank.uz") doesn't match the actual destination URL
+- Honest fallback behavior: when no real email headers are present 
+  (casually pasted text), the app clearly discloses that sender 
+  analysis was skipped rather than guessing
+- Reuses existing scam pattern detection, time-pressure regex, and 
+  the full URLAnalyzer pipeline for any links found
+- New core/institution_lookup.py: shared bank/payment-processor name 
+  lookup, refactored out of sms_analyzer.py for reuse across SMS and 
+  email analyzers
+- Full localization (EN/RU/UZ)
+
+### Testing
+- Added tests/test_email_analyzer.py: header parsing, sender/reply-to 
+  mismatch detection, hidden link detection, and combined risk 
+  assessment across headers-present and headers-absent cases
+- 120+ tests passing total
+
+### Note
+This replaces the originally planned "Community Threat Database," 
+which would have required hosted backend infrastructure. This 
+feature instead extends the existing client-side detection 
+architecture, consistent with every other feature in the app.
