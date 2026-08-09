@@ -143,6 +143,7 @@ MESSAGES = {
         "message_dialog_time_pressure_found": "Time-Pressure Language Detected",
         "message_dialog_structural_found": "Suspicious Message Structure",
 
+        #sms analysis reasons
         "sms_reason_link_risk": "Link '{url}' scored {level} risk",
         "sms_reason_pattern_count": "Message contains {count} scam indicator categories: {categories}",
         "sms_reason_pattern_count_singular": "Message contains 1 scam indicator category: {categories}",
@@ -151,6 +152,25 @@ MESSAGES = {
         "sms_reason_structural": "Message has a typical phishing SMS shape (short message, action link, and a call-to-action verb combined)",
         "sms_reason_none": "No suspicious links or scam language detected",
         "sms_analysis_failed": "analysis failed",
+
+        #email analysis reasons
+        "email_reason_link_risk": "Link '{url}' scored {level}",
+        "email_reason_sender_mismatch": "Sender claims to be '{institution}' but the email address ({address}) doesn't match their official domain",
+        "email_reason_reply_to_mismatch": "Reply-To address ({reply_to}) differs from the sender address ({from_address}) — a common spoofing trick",
+        "email_reason_hidden_link": "Link text shows '{displayed}' but actually points to {actual}",
+        "gui_email_button": "Analyze Email",
+        "email_dialog_title": "Analyze Email",
+        "email_dialog_placeholder": "Paste the email content here (raw source with headers, or just the visible text)...",
+        "email_dialog_analyze": "Analyze",
+        "email_dialog_close": "Close",
+        "email_dialog_empty": "Please paste an email first.",
+        "email_dialog_no_headers_notice": "No email headers detected — analyzing message content only. Paste the raw email source (View Source / Show Original) for sender verification.",
+        "email_dialog_sender_found": "Sender Information",
+        "email_dialog_hidden_links_found": "Hidden Link Detected",
+        "email_dialog_urls_found": "Links found in email",
+        "email_dialog_patterns_found": "Scam language detected",
+        "email_dialog_verdict": "Overall Assessment",
+        "email_dialog_no_findings": "No suspicious indicators detected.",
 
         # Settings dialog
         "settings_title": "Settings",
@@ -372,6 +392,8 @@ MESSAGES = {
         "message_dialog_impersonation_found": "Обнаружена имитация организации",
         "message_dialog_time_pressure_found": "Обнаружено давление по времени",
         "message_dialog_structural_found": "Подозрительная структура сообщения",
+
+        #SMS analysis reasons
         "sms_reason_link_risk": "Ссылка «{url}» получила оценку риска: {level}",
         "sms_reason_pattern_count": "Сообщение содержит {count} категорий признаков мошенничества: {categories}",
         "sms_reason_pattern_count_singular": "Сообщение содержит 1 категорию признаков мошенничества: {categories}",
@@ -380,6 +402,25 @@ MESSAGES = {
         "sms_reason_structural": "Сообщение имеет типичную структуру фишингового SMS (короткое сообщение, ссылка на действие и призыв к действию)",
         "sms_reason_none": "Подозрительные ссылки или мошеннические формулировки не обнаружены",
         "sms_analysis_failed": "ошибка анализа",
+
+        #email analysis reasons
+        "email_reason_link_risk": "Ссылка «{url}» получила оценку риска: {level}",
+        "email_reason_sender_mismatch": "Отправитель утверждает, что это «{institution}», но адрес электронной почты ({address}) не совпадает с их официальным доменом",
+        "email_reason_reply_to_mismatch": "Адрес Reply-To ({reply_to}) отличается от адреса отправителя ({from_address}) — распространённый приём подделки",
+        "email_reason_hidden_link": "Текст ссылки показывает «{displayed}», но фактически ведёт на {actual}",
+        "gui_email_button": "Анализ Email",
+        "email_dialog_title": "Анализ Email",
+        "email_dialog_placeholder": "Вставьте содержимое письма сюда (исходный код с заголовками или просто видимый текст)...",
+        "email_dialog_analyze": "Анализировать",
+        "email_dialog_close": "Закрыть",
+        "email_dialog_empty": "Сначала вставьте письмо.",
+        "email_dialog_no_headers_notice": "Заголовки письма не обнаружены — анализируется только содержимое. Вставьте исходный код письма (Показать оригинал) для проверки отправителя.",
+        "email_dialog_sender_found": "Информация об отправителе",
+        "email_dialog_hidden_links_found": "Обнаружена скрытая ссылка",
+        "email_dialog_urls_found": "Ссылки в письме",
+        "email_dialog_patterns_found": "Обнаружены мошеннические формулировки",
+        "email_dialog_verdict": "Общая оценка",
+        "email_dialog_no_findings": "Подозрительные признаки не обнаружены.",
 
         # Settings dialog
         "settings_title": "Настройки",
@@ -601,6 +642,8 @@ MESSAGES = {
         "message_dialog_impersonation_found": "Tashkilotni taqlid qilish aniqlandi",
         "message_dialog_time_pressure_found": "Vaqt bosimi tili aniqlandi",
         "message_dialog_structural_found": "Shubhali xabar tuzilishi",
+
+        #sms analysis reasons
         "sms_reason_link_risk": "«{url}» havolasi {level} xavf darajasini oldi",
         "sms_reason_pattern_count": "Xabarda {count} ta firibgarlik belgisi toifasi mavjud: {categories}",
         "sms_reason_pattern_count_singular": "Xabarda 1 ta firibgarlik belgisi toifasi mavjud: {categories}",
@@ -609,6 +652,25 @@ MESSAGES = {
         "sms_reason_structural": "Xabar odatiy fishing SMS tuzilishiga ega (qisqa xabar, harakat havolasi va chaqiriq birgalikda)",
         "sms_reason_none": "Shubhali havolalar yoki firibgarlik iboralari topilmadi",
         "sms_analysis_failed": "tahlil muvaffaqiyatsiz",
+
+        #email analysis reasons
+        "email_reason_link_risk": "«{url}» havolasi: {level}",
+        "email_reason_sender_mismatch": "Yuboruvchi «{institution}» ekanligini da'vo qiladi, lekin elektron pochta manzili ({address}) ularning rasmiy domeniga mos kelmaydi",
+        "email_reason_reply_to_mismatch": "Reply-To manzili ({reply_to}) yuboruvchi manzilidan ({from_address}) farq qiladi — bu keng tarqalgan firibgarlik usuli",
+        "email_reason_hidden_link": "Havola matni «{displayed}» ko'rsatiladi, lekin aslida {actual} ga yo'naltiradi",
+        "gui_email_button": "Emailni tahlil qilish",
+        "email_dialog_title": "Emailni tahlil qilish",
+        "email_dialog_placeholder": "Email matnini shu yerga joylashtiring (sarlavhalar bilan asl manba yoki shunchaki ko'rinadigan matn)...",
+        "email_dialog_analyze": "Tahlil qilish",
+        "email_dialog_close": "Yopish",
+        "email_dialog_empty": "Avval emailni joylashtiring.",
+        "email_dialog_no_headers_notice": "Email sarlavhalari topilmadi — faqat xabar matni tahlil qilinmoqda. Yuboruvchini tekshirish uchun asl email manbasini (View Source / Show Original) joylashtiring.",
+        "email_dialog_sender_found": "Yuboruvchi ma'lumotlari",
+        "email_dialog_hidden_links_found": "Yashirin havola aniqlandi",
+        "email_dialog_urls_found": "Emaildagi havolalar",
+        "email_dialog_patterns_found": "Firibgarlik iboralari aniqlandi",
+        "email_dialog_verdict": "Umumiy baho",
+        "email_dialog_no_findings": "Shubhali belgilar topilmadi.",
         
         # Settings dialog
         "settings_title": "Sozlamalar",

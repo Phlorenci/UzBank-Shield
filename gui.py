@@ -34,6 +34,7 @@ from gui.settings_dialog import SettingsDialog
 from gui.qr_scanner_dialog import QRScannerDialog
 from gui.message_analyzer_dialog import MessageAnalyzerDialog
 from gui.ai_assistant_dialog import AIAssistantDialog
+from gui.email_analyzer_dialog import EmailAnalyzerDialog
 
 LEVEL_COLORS = {
     "LOW": "#2ecc71",
@@ -250,12 +251,16 @@ class MainWindow(QMainWindow):
         # AI assistant button
         self.ai_button = QPushButton()
         self.ai_button.clicked.connect(self._on_ai_button_clicked)
+        #email analyzer button
+        self.email_button = QPushButton()
+        self.email_button.clicked.connect(self._on_email_button_clicked)
 
         input_row.addWidget(self.url_input)
         input_row.addWidget(self.scan_button)
         input_row.addWidget(self.qr_button)
         input_row.addWidget(self.message_button)
         input_row.addWidget(self.ai_button)
+        input_row.addWidget(self.email_button)
 
         outer_layout.addLayout(input_row)
 
@@ -360,6 +365,7 @@ class MainWindow(QMainWindow):
         self.message_button.setText(self._t("gui_message_button"))
         self.settings_action.setText(self._t("gui_settings_button"))
         self.ai_button.setText(self._t("gui_ai_button"))
+        self.email_button.setText(self._t("gui_email_button"))
 
         if not self.scan_history:
             self.status_label.setText(self._t("gui_status_ready"))
@@ -456,6 +462,10 @@ class MainWindow(QMainWindow):
             self.last_result,
             self
         )
+        dialog.exec()
+
+    def _on_email_button_clicked(self):
+        dialog = EmailAnalyzerDialog(self.config.get("language", "en"), self)
         dialog.exec()
 
     # ---------------------------------
