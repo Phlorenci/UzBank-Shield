@@ -176,13 +176,25 @@ Completed
 
 ---
 
-# Version 1.5 – Community Threat Database
+# Version 1.5 – Email Phishing Analyzer
 
 Planned
 
-- Report phishing websites
-- Community updates
-- Shared threat intelligence
+- Paste raw email content (headers + body) for phishing analysis
+- Sender display-name vs. actual email domain mismatch detection
+- Hidden link detection: displayed link text vs. actual destination URL
+- Institution impersonation detection (reuses bank/processor database, 
+  same pattern as SMS analyzer)
+- Reuses existing scam language pattern detection (urgency, sensitive 
+  info requests, etc.)
+- Extracted URLs routed through the full URLAnalyzer pipeline
+- Full localization (EN/RU/UZ)
+
+Note: Replaces the originally planned "Community Threat Database," 
+which required hosted backend infrastructure the project isn't 
+taking on right now. This feature instead extends the existing 
+client-side detection architecture — no server required, consistent 
+with every other feature in the app.
 
 ---
 
