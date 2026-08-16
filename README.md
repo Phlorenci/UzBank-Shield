@@ -15,26 +15,11 @@
 
 UzBank Shield detects phishing websites impersonating Uzbek banks and payment processors — verifying domains against the Central Bank of Uzbekistan's official registry, catching typosquatting, analyzing payment pages for card-stealing forms, and scanning QR codes for hidden threats. Available as both a terminal tool and a desktop app.
 
-<div align="center">
-  <img src="assets/screenshots/main-scan-result.png" alt="UzBank Shield scanning a verified bank domain" width="700">
-</div>
+UzBank Shield catches real threats — a URL just one character off from a real bank domain is correctly flagged as likely impersonation, with the closest official match and similarity score shown.
 
-### Catches real threats
+QR codes and barcodes are scanned live via webcam, not just for website links. The app automatically classifies WiFi credentials, payment QR codes (Toss, Alipay, WeChat Pay-style EMV codes), contact cards, and crypto addresses, with a tailored safety assessment for each.
 
-<div align="center">
-  <img src="assets/screenshots/threat-detected.png" alt="UzBank Shield detecting a typosquatted phishing domain" width="700">
-</div>
-
-*A URL just one character off from a real bank domain, correctly flagged as likely impersonation.*
-
-### QR code and barcode scanning
-
-<div align="center">
-  <img src="assets/screenshots/qr-scanner.png" alt="Live QR code scanner" width="500">
-  <img src="assets/screenshots/qr-scanner-result.png" alt="QR code classification result" width="500">
-</div>
-
-Scans any QR code or barcode live via webcam — not just website links. Automatically classifies WiFi credentials, payment QR codes (Toss, Alipay, WeChat Pay-style EMV codes), contact cards, and crypto addresses, with a tailored safety assessment for each.
+---
 
 ---
 
